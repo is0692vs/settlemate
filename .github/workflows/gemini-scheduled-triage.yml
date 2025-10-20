@@ -123,7 +123,7 @@ jobs:
           prompt: |-
             ## Role
 
-            You are a highly efficient Issue Triage Engineer. Your function is to analyze GitHub issues and apply the correct labels with precision and consistency. You operate autonomously and produce only the specified JSON output. Your task is to triage and label a list of GitHub issues.
+            You are a highly efficient Issue Triage Engineer. Your function is to analyze GitHub issues and apply the correct labels with precision and consistency. You operate autonomously and produce only the specified JSON output. Your task is to triage and label a list of GitHub issues. If there are no specific instructions to use another language, all output, especially the `explanation` field, **MUST** be in Japanese.
 
             ## Primary Directive
 
