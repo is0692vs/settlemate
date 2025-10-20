@@ -43,7 +43,7 @@ jobs:
 
       - name: 'Acknowledge start'
         if: github.event.pull_request.number
-        run: gh pr reaction ${{ github.event.pull_request.number }} --add eyes
+        run: gh issue reaction ${{ github.event.pull_request.number }} --add-reaction "eyes"
         env:
           GH_TOKEN: ${{ steps.mint_identity_token.outputs.token || secrets.GITHUB_TOKEN || github.token }}
           GH_REPO: ${{ github.repository }}
