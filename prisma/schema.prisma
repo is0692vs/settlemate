@@ -1,15 +1,128 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
-  output   = "../app/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+// NextAuth用モデル
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// アプリケーションモデル
+model User {
+  id             String        @id @default(cuid())
+  name           String?
+  email          String        @unique
+  emailVerified  DateTime?
+  image          String?
+  paymentMethods Json?         // 返済方法の設定
+  
+  accounts       Account[]
+  sessions       Session[]
+  groupMembers   GroupMember[]
+  createdGroups  Group[]       @relation("GroupCreator")
+  paidExpenses   Expense[]     @relation("ExpensePayer")
+  settlements    Settlement[]  @relation("SettlementPayer")
+  receivedSettlements Settlement[] @relation("SettlementReceiver")
+}
+
+model Group {
+  id        String        @id @default(cuid())
+  name      String
+  icon      String?       // 絵文字
+  createdBy String
+  createdAt DateTime      @default(now())
+  
+  creator   User          @relation("GroupCreator", fields: [createdBy], references: [id])
+  members   GroupMember[]
+  expenses  Expense[]
+  balances  Balance[]
+  settlements Settlement[]
+}
+
+model GroupMember {
+  id       String   @id @default(cuid())
+  groupId  String
+  userId   String
+  joinedAt DateTime @default(now())
+  
+  group    Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([groupId, userId])
+}
+
+model Expense {
+  id           String   @id @default(cuid())
+  groupId      String
+  paidBy       String
+  amount       Int      // 金額（円単位）
+  description  String?
+  participants Json     // 参加者IDの配列
+  splitType    String   @default("equal") // "equal" or "manual"
+  date         DateTime @default(now())
+  
+  group        Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  payer        User     @relation("ExpensePayer", fields: [paidBy], references: [id])
+}
+
+model Balance {
+  id       String @id @default(cuid())
+  groupId  String
+  userFrom String
+  userTo   String
+  amount   Int    // userFromがuserToに支払うべき金額
+  
+  group    Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  
+  @@unique([groupId, userFrom, userTo])
+}
+
+model Settlement {
+  id         String   @id @default(cuid())
+  groupId    String
+  paidBy     String
+  paidTo     String
+  amount     Int
+  method     String   // "cash", "bank", "paypay", "linepay"
+  settledAt  DateTime @default(now())
+  
+  group      Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  payer      User     @relation("SettlementPayer", fields: [paidBy], references: [id])
+  receiver   User     @relation("SettlementReceiver", fields: [paidTo], references: [id])
 }
