@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import DeleteGroupButton from "@/components/groups/DeleteGroupButton";
+import { ExpenseList } from "@/components/expenses/ExpenseList";
 
 async function deleteGroupAction(groupId: string) {
   "use server";
@@ -69,6 +70,12 @@ export default async function GroupDetailPage({
           joinedAt: "asc",
         },
       },
+      expenses: {
+        include: {
+          payer: true,
+        },
+        orderBy: { date: "desc" },
+      },
     },
   });
 
@@ -111,6 +118,11 @@ export default async function GroupDetailPage({
                 戻る
               </button>
             </Link>
+            <Link href={`/dashboard/groups/${group.id}/expenses/new`}>
+              <button className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                支出を追加
+              </button>
+            </Link>
             <Link href={`/dashboard/groups/${group.id}/edit`}>
               <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
                 編集
@@ -118,6 +130,11 @@ export default async function GroupDetailPage({
             </Link>
             <DeleteGroupButton onDelete={deleteAction} />
           </div>
+        </div>
+
+        <div className="bg-white rounded-lg shadow p-6 mb-6">
+          <h2 className="text-xl font-semibold mb-4">支出履歴</h2>
+          <ExpenseList expenses={group.expenses} groupId={group.id} />
         </div>
 
         <div className="bg-white rounded-lg shadow p-6">
