@@ -8,6 +8,8 @@ import { InviteLink } from "@/components/groups/InviteLink";
 import { ExpenseList } from "@/components/expenses/ExpenseList";
 import BalanceViewer from "@/components/graphs/BalanceViewer";
 import { balancesToGraph } from "@/lib/utils/graph";
+import SettlementForm from "@/components/settlements/SettlementForm";
+import SettlementList from "@/components/settlements/SettlementList";
 import type { GroupMember, User } from "@prisma/client";
 
 async function deleteGroupAction(groupId: string) {
@@ -137,6 +139,37 @@ export default async function GroupDetailPage({
     toUser: balance.toUser,
   }));
 
+  // 自分が借りている相手のリスト
+  const myDebts = group.balances
+    .filter((balance) => balance.userFrom === session.user?.id)
+    .map((balance) => ({
+      userTo: balance.userTo,
+      amount: balance.amount,
+      toUser: balance.toUser,
+    }));
+
+  // 返済履歴取得
+  const settlements = await prisma.settlement.findMany({
+    where: { groupId: group.id },
+    include: {
+      payer: {
+        select: {
+          id: true,
+          name: true,
+          image: true,
+        },
+      },
+      receiver: {
+        select: {
+          id: true,
+          name: true,
+          image: true,
+        },
+      },
+    },
+    orderBy: { settledAt: "desc" },
+  });
+
   const deleteAction = deleteGroupAction.bind(null, group.id);
 
   return (
@@ -184,6 +217,35 @@ export default async function GroupDetailPage({
         <div className="bg-white rounded-lg shadow p-6 mb-6">
           <h2 className="text-xl font-semibold mb-4">支出履歴</h2>
           <ExpenseList expenses={group.expenses} groupId={group.id} />
+        </div>
+
+        <div className="bg-white rounded-lg shadow p-6 mb-6">
+          <h2 className="text-2xl font-bold mb-4">返済記録</h2>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div>
+              <h3 className="text-lg font-semibold mb-3">返済を記録</h3>
+              <SettlementForm groupId={group.id} balances={myDebts} />
+            </div>
+
+            <div>
+              <h3 className="text-lg font-semibold mb-3">返済履歴</h3>
+              <SettlementList
+                groupId={group.id}
+                settlements={settlements.map((s) => ({
+                  id: s.id,
+                  userFrom: s.paidBy,
+                  userTo: s.paidTo,
+                  amount: s.amount,
+                  method: s.method,
+                  description: s.description,
+                  createdAt: s.settledAt.toISOString(),
+                  fromUser: s.payer,
+                  toUser: s.receiver,
+                }))}
+                currentUserId={session.user.id}
+              />
+            </div>
+          </div>
         </div>
 
         <div className="bg-white rounded-lg shadow p-6">
