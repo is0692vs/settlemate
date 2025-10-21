@@ -1,5 +1,6 @@
 import dagre from "@dagrejs/dagre";
 import type { Node, Edge } from "@xyflow/react";
+import { netBalances } from "./balance";
 
 export type Balance = {
   userFrom: string;
@@ -38,6 +39,9 @@ export function balancesToGraph(
   users: User[],
   currentUserId?: string
 ): { nodes: Node<UserNodeData>[]; edges: Edge<DebtEdgeData>[] } {
+  // ★ 相殺処理を追加
+  const netBalanceData = netBalances(balances);
+
   // 1. 全メンバーのノードを作成
   const nodes: Node<UserNodeData>[] = users.map((user) => ({
     id: user.id,
@@ -50,8 +54,8 @@ export function balancesToGraph(
     },
   }));
 
-  // 2. 残高があるエッジのみ作成
-  const edges: Edge<DebtEdgeData>[] = balances
+  // 2. 残高があるエッジのみ作成（相殺後のデータを使用）
+  const edges: Edge<DebtEdgeData>[] = netBalanceData
     .filter((balance) => balance.amount > 0)
     .map((balance) => ({
       id: `${balance.userFrom}-${balance.userTo}`,

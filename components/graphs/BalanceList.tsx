@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { netBalances } from "@/lib/utils/balance";
 
 export type BalanceWithUser = {
   userFrom: string;
@@ -27,13 +28,16 @@ export default function BalanceList({
   balances,
   currentUserId,
 }: BalanceListProps) {
-  // 払う必要がある残高
-  const toPay = balances.filter(
+  // ★ 相殺処理を追加
+  const netBalanceData = netBalances(balances);
+
+  // 払う必要がある残高（相殺後）
+  const toPay = netBalanceData.filter(
     (balance) => balance.userFrom === currentUserId && balance.amount > 0
   );
 
-  // 貰える残高
-  const toReceive = balances.filter(
+  // 貰える残高（相殺後）
+  const toReceive = netBalanceData.filter(
     (balance) => balance.userTo === currentUserId && balance.amount > 0
   );
 
