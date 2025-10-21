@@ -26,7 +26,7 @@ export async function POST(request: Request) {
     }
 
     const { name, icon } = result.data;
-    const userId = session.user!.id;
+    const userId = session.user.id;
 
     // トランザクションでグループ作成とメンバー追加を実行
     const group = await prisma.$transaction(async (tx) => {
