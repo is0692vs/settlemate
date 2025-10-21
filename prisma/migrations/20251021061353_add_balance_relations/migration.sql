@@ -1,0 +1,5 @@
+-- AddForeignKey
+ALTER TABLE "Balance" ADD CONSTRAINT "Balance_userFrom_fkey" FOREIGN KEY ("userFrom") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Balance" ADD CONSTRAINT "Balance_userTo_fkey" FOREIGN KEY ("userTo") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
