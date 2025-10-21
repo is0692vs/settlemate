@@ -34,7 +34,9 @@ export default function ProfileInfo({ user }: { user: UserSummary }) {
         )}
         <div>
           <p className="text-xl font-semibold text-gray-900">{displayName}</p>
-          <p className="text-sm text-gray-600">{user.email ?? "メール未設定"}</p>
+          <p className="text-sm text-gray-600">
+            {user.email ?? "メール未設定"}
+          </p>
         </div>
       </div>
     </div>

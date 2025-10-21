@@ -64,9 +64,7 @@ export default function PaymentMethodsSettings({
       setMessage({
         type: "error",
         text:
-          error instanceof Error
-            ? error.message
-            : "設定の保存に失敗しました",
+          error instanceof Error ? error.message : "設定の保存に失敗しました",
       });
     } finally {
       setIsSubmitting(false);

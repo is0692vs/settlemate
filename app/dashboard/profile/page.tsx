@@ -23,8 +23,8 @@ function normalizeAcceptedMethods(
   value: Prisma.JsonValue | null | undefined
 ): PaymentMethodValue[] {
   if (Array.isArray(value)) {
-    const filtered = value.filter((item): item is PaymentMethodValue =>
-      typeof item === "string"
+    const filtered = value.filter(
+      (item): item is PaymentMethodValue => typeof item === "string"
     );
     return filtered.length > 0 ? filtered : DEFAULT_METHODS;
   }
@@ -33,8 +33,8 @@ function normalizeAcceptedMethods(
     try {
       const parsed = JSON.parse(value);
       if (Array.isArray(parsed)) {
-        const filtered = parsed.filter((item): item is PaymentMethodValue =>
-          typeof item === "string"
+        const filtered = parsed.filter(
+          (item): item is PaymentMethodValue => typeof item === "string"
         );
         if (filtered.length > 0) {
           return filtered;
@@ -97,9 +97,7 @@ export default async function ProfilePage() {
     redirect("/auth/signin");
   }
 
-  const acceptedMethods = normalizeAcceptedMethods(
-    user.acceptedPaymentMethods
-  );
+  const acceptedMethods = normalizeAcceptedMethods(user.acceptedPaymentMethods);
 
   return (
     <div className="min-h-screen bg-gray-50">

@@ -15,12 +15,15 @@ import {
 } from "@/lib/constants/payment-methods";
 import type { Prisma } from "@prisma/client";
 
-const paymentMethodEnumValues =
-  PAYMENT_METHOD_VALUES as [PaymentMethodValue, ...PaymentMethodValue[]];
+const paymentMethodEnumValues = PAYMENT_METHOD_VALUES as [
+  PaymentMethodValue,
+  ...PaymentMethodValue[]
+];
 
 const settlementFormSchema = z.object({
   userTo: z.string().min(1, "返済先を選択してください"),
-  amount: z.number()
+  amount: z
+    .number()
     .min(1, "金額は1円以上である必要があります")
     .int("金額は整数である必要があります"),
   method: z.enum(paymentMethodEnumValues),
@@ -52,8 +55,8 @@ function normalizeAcceptedMethods(
   value: Prisma.JsonValue | null | undefined
 ): PaymentMethodValue[] {
   if (Array.isArray(value)) {
-    const list = value.filter((item): item is PaymentMethodValue =>
-      typeof item === "string"
+    const list = value.filter(
+      (item): item is PaymentMethodValue => typeof item === "string"
     );
     if (list.length > 0) {
       return list;
@@ -64,8 +67,8 @@ function normalizeAcceptedMethods(
     try {
       const parsed = JSON.parse(value);
       if (Array.isArray(parsed)) {
-        const list = parsed.filter((item): item is PaymentMethodValue =>
-          typeof item === "string"
+        const list = parsed.filter(
+          (item): item is PaymentMethodValue => typeof item === "string"
         );
         if (list.length > 0) {
           return list;
@@ -280,7 +283,9 @@ export default function SettlementForm({
                 <span className="mr-2 text-lg" aria-hidden>
                   {method.icon}
                 </span>
-                <span>{PAYMENT_METHOD_LABELS[method.value] ?? method.label}</span>
+                <span>
+                  {PAYMENT_METHOD_LABELS[method.value] ?? method.label}
+                </span>
               </label>
             ))}
           </div>
@@ -361,9 +366,7 @@ export default function SettlementForm({
             </li>
             <li
               className={
-                validationStatus.noErrors
-                  ? "line-through text-gray-500"
-                  : ""
+                validationStatus.noErrors ? "line-through text-gray-500" : ""
               }
             >
               ✓ すべてのフィールドが正しく入力

@@ -8,8 +8,10 @@ import {
   type PaymentMethodValue,
 } from "@/lib/constants/payment-methods";
 
-const paymentMethodEnumValues =
-  PAYMENT_METHOD_VALUES as [PaymentMethodValue, ...PaymentMethodValue[]];
+const paymentMethodEnumValues = PAYMENT_METHOD_VALUES as [
+  PaymentMethodValue,
+  ...PaymentMethodValue[]
+];
 
 export const updateUserSettingsSchema = z.object({
   acceptedPaymentMethods: z
