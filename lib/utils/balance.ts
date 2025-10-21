@@ -10,6 +10,8 @@ export type BalanceUpdate = {
 type TransactionClient = any;
 
 // 均等割りの残高計算
+// 注意: Math.floor() により端数が切り捨てられます。
+// 例: 3000円を3人で割ると999円×3=2997円となり、3円の端数は支払い者が負担します。
 export function calculateEqualSplit(
   amount: number,
   paidBy: string,

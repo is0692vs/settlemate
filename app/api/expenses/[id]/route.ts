@@ -82,7 +82,7 @@ export async function PATCH(
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
 
-    // 作成者のみ更新可能
+    // 支払い者のみ更新可能
     if (expense.paidBy !== session.user.id) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
@@ -126,7 +126,7 @@ export async function DELETE(
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
 
-    // 作成者のみ削除可能
+    // 支払い者のみ削除可能
     if (expense.paidBy !== session.user.id) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
