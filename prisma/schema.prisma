@@ -59,6 +59,8 @@ model User {
   paidExpenses   Expense[]     @relation("ExpensePayer")
   settlements    Settlement[]  @relation("SettlementPayer")
   receivedSettlements Settlement[] @relation("SettlementReceiver")
+  balancesFrom   Balance[]     @relation("BalanceFrom")
+  balancesTo     Balance[]     @relation("BalanceTo")
 }
 
 model Group {
@@ -110,6 +112,8 @@ model Balance {
   amount   Int    // userFromがuserToに支払うべき金額
   
   group    Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  fromUser User   @relation("BalanceFrom", fields: [userFrom], references: [id])
+  toUser   User   @relation("BalanceTo", fields: [userTo], references: [id])
   
   @@unique([groupId, userFrom, userTo])
 }

@@ -6,6 +6,8 @@ import { prisma } from "@/lib/prisma";
 import DeleteGroupButton from "@/components/groups/DeleteGroupButton";
 import { InviteLink } from "@/components/groups/InviteLink";
 import { ExpenseList } from "@/components/expenses/ExpenseList";
+import BalanceGraph from "@/components/graphs/BalanceGraph";
+import { balancesToGraph } from "@/lib/utils/graph";
 import type { GroupMember, User } from "@prisma/client";
 
 async function deleteGroupAction(groupId: string) {
@@ -78,6 +80,12 @@ export default async function GroupDetailPage({
         },
         orderBy: { date: "desc" },
       },
+      balances: {
+        include: {
+          fromUser: { select: { id: true, name: true, image: true } },
+          toUser: { select: { id: true, name: true, image: true } },
+        },
+      },
     },
   });
 
@@ -105,6 +113,20 @@ export default async function GroupDetailPage({
       joinedAt: member.joinedAt.toISOString(),
     })
   );
+
+  // グラフデータを生成
+  const users = group.members
+    .map((m: GroupMember & { user: User | null }) => m.user)
+    .filter((user): user is User => user !== null);
+
+  const balances = group.balances.map((balance) => ({
+    userFrom: balance.userFrom,
+    userTo: balance.userTo,
+    amount: balance.amount,
+    groupId: balance.groupId,
+  }));
+
+  const { nodes, edges } = balancesToGraph(balances, users, session.user.id);
 
   const deleteAction = deleteGroupAction.bind(null, group.id);
 
@@ -138,6 +160,11 @@ export default async function GroupDetailPage({
 
         <div className="bg-white rounded-lg shadow p-6 mb-6">
           <InviteLink inviteCode={group.inviteCode} />
+        </div>
+
+        <div className="bg-white rounded-lg shadow p-6 mb-6">
+          <h2 className="text-xl font-semibold mb-4">残高グラフ</h2>
+          <BalanceGraph nodes={nodes} edges={edges} />
         </div>
 
         <div className="bg-white rounded-lg shadow p-6 mb-6">
