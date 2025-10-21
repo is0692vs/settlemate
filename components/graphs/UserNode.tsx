@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { memo } from 'react';
-import Image from 'next/image';
-import { Handle, Position } from '@xyflow/react';
-import type { NodeProps } from '@xyflow/react';
-import type { UserNodeData } from '@/lib/utils/graph';
+import { memo } from "react";
+import Image from "next/image";
+import { Handle, Position } from "@xyflow/react";
+import type { NodeProps } from "@xyflow/react";
+import type { UserNodeData } from "@/lib/utils/graph";
 
 function UserNode({ data }: NodeProps) {
   const { name, image, isMe } = data as UserNodeData;
@@ -17,11 +17,15 @@ function UserNode({ data }: NodeProps) {
       className={`
         px-4 py-3 rounded-lg border-2 bg-white shadow-md
         w-[180px] h-[80px]
-        ${isMe ? 'border-blue-500 ring-2 ring-blue-200' : 'border-gray-300'}
+        ${isMe ? "border-blue-500 ring-2 ring-blue-200" : "border-gray-300"}
       `}
     >
       <Handle type="target" position={Position.Left} className="!bg-gray-400" />
-      <Handle type="source" position={Position.Right} className="!bg-gray-400" />
+      <Handle
+        type="source"
+        position={Position.Right}
+        className="!bg-gray-400"
+      />
 
       <div className="flex items-center gap-3 h-full">
         {/* ユーザーアイコン */}
@@ -44,9 +48,7 @@ function UserNode({ data }: NodeProps) {
         {/* ユーザー名 */}
         <div className="flex-1 min-w-0">
           <p className="text-sm font-medium text-gray-900 truncate">{name}</p>
-          {isMe && (
-            <p className="text-xs text-blue-600 font-medium">あなた</p>
-          )}
+          {isMe && <p className="text-xs text-blue-600 font-medium">あなた</p>}
         </div>
       </div>
     </div>

@@ -1,5 +1,5 @@
-import dagre from '@dagrejs/dagre';
-import type { Node, Edge } from '@xyflow/react';
+import dagre from "@dagrejs/dagre";
+import type { Node, Edge } from "@xyflow/react";
 
 export type Balance = {
   userFrom: string;
@@ -41,10 +41,10 @@ export function balancesToGraph(
   // 1. 全メンバーのノードを作成
   const nodes: Node<UserNodeData>[] = users.map((user) => ({
     id: user.id,
-    type: 'userNode',
+    type: "userNode",
     position: { x: 0, y: 0 }, // Dagreで後から計算
     data: {
-      name: user.name ?? '名前未設定',
+      name: user.name ?? "名前未設定",
       image: user.image,
       isMe: user.id === currentUserId,
     },
@@ -57,7 +57,7 @@ export function balancesToGraph(
       id: `${balance.userFrom}-${balance.userTo}`,
       source: balance.userFrom, // 債務者（借りてる人）
       target: balance.userTo, // 債権者（貸してる人）
-      type: 'debtEdge',
+      type: "debtEdge",
       label: `¥${balance.amount.toLocaleString()}`,
       data: {
         amount: balance.amount,
@@ -69,7 +69,7 @@ export function balancesToGraph(
   // 3. Dagreでレイアウト計算
   const dagreGraph = new dagre.graphlib.Graph();
   dagreGraph.setDefaultEdgeLabel(() => ({}));
-  dagreGraph.setGraph({ rankdir: 'LR' }); // 左→右レイアウト
+  dagreGraph.setGraph({ rankdir: "LR" }); // 左→右レイアウト
 
   // 4. ノードをDagreに追加
   const nodeWidth = 180;

@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import { memo } from 'react';
+import { memo } from "react";
 import {
   BaseEdge,
   EdgeLabelRenderer,
   getBezierPath,
   type EdgeProps,
-} from '@xyflow/react';
-import type { DebtEdgeData } from '@/lib/utils/graph';
+} from "@xyflow/react";
+import type { DebtEdgeData } from "@/lib/utils/graph";
 
 function DebtEdge({
   id,
@@ -33,9 +33,9 @@ function DebtEdge({
   const { amount, isMyDebt, isMyCredit } = data as DebtEdgeData;
 
   // 色分けルール
-  let strokeColor = '#94a3b8'; // グレー（他人間の借金）
-  if (isMyDebt) strokeColor = '#ef4444'; // 赤（自分が払う）
-  if (isMyCredit) strokeColor = '#22c55e'; // 緑（自分が貰える）
+  let strokeColor = "#94a3b8"; // グレー（他人間の借金）
+  if (isMyDebt) strokeColor = "#ef4444"; // 赤（自分が払う）
+  if (isMyCredit) strokeColor = "#22c55e"; // 緑（自分が貰える）
 
   // 線の太さ（金額に応じて変化）
   const strokeWidth = Math.max(2, amount / 500);

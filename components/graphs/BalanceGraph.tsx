@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { ReactFlow, Background, Controls, MiniMap } from '@xyflow/react';
-import type { Node, Edge } from '@xyflow/react';
+import { ReactFlow, Background, Controls, MiniMap } from "@xyflow/react";
+import type { Node, Edge } from "@xyflow/react";
 
-import UserNode from './UserNode';
-import DebtEdge from './DebtEdge';
-import type { UserNodeData, DebtEdgeData } from '@/lib/utils/graph';
+import UserNode from "./UserNode";
+import DebtEdge from "./DebtEdge";
+import type { UserNodeData, DebtEdgeData } from "@/lib/utils/graph";
 
 // React FlowのスタイルはグローバルCSSでインポート
 const nodeTypes = {
