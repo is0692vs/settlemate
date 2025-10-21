@@ -5,59 +5,66 @@ export type BalanceUpdate = {
   amount: number;
 };
 
+export type Participant = {
+  userId: string;
+  amount: number;
+};
+
 // Prismaトランザクション用の型
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type TransactionClient = any;
 
 // 均等割りの残高計算
-// 注意: Math.floor() により端数が切り捨てられます。
-// 例: 3000円を3人で割ると999円×3=2997円となり、3円の端数は支払い者が負担します。
+// 端数は最初の債務者から順に+1円ずつ割り振る
 export function calculateEqualSplit(
   amount: number,
   paidBy: string,
-  participants: string[]
+  participantUserIds: string[]
 ): BalanceUpdate[] {
-  const participantCount = participants.length;
-  const perPerson = Math.floor(amount / participantCount);
+  const debtors = participantUserIds.filter((id) => id !== paidBy);
+  const debtorCount = debtors.length;
+
+  if (debtorCount === 0) {
+    return [];
+  }
+
+  const perPerson = Math.floor(amount / (debtorCount + 1)); // 払った人も含めて計算
+  const remainder = amount % (debtorCount + 1);
 
   const balances: BalanceUpdate[] = [];
 
-  // 払った人以外が perPerson ずつ返す
-  for (const userId of participants) {
-    if (userId !== paidBy) {
+  debtors.forEach((userId, index) => {
+    const debtAmount = perPerson + (index < remainder ? 1 : 0);
+    balances.push({
+      groupId: "",
+      userFrom: userId,
+      userTo: paidBy,
+      amount: debtAmount,
+    });
+  });
+
+  return balances;
+}
+
+// 手動登録の残高計算（複数債務者対応）
+export function calculateManualSplit(
+  paidBy: string,
+  participants: Participant[]
+): BalanceUpdate[] {
+  const balances: BalanceUpdate[] = [];
+
+  for (const participant of participants) {
+    if (participant.userId !== paidBy) {
       balances.push({
-        groupId: "", // 後で設定
-        userFrom: userId,
+        groupId: "",
+        userFrom: participant.userId,
         userTo: paidBy,
-        amount: perPerson,
+        amount: participant.amount,
       });
     }
   }
 
   return balances;
-}
-
-// 手動借金登録の残高計算
-export function calculateManualSplit(
-  amount: number,
-  paidBy: string,
-  participants: string[]
-): BalanceUpdate[] {
-  // participants内で paidBy以外が借りた人
-  const borrower = participants.find((id) => id !== paidBy);
-
-  if (!borrower) {
-    throw new Error("Invalid participants for manual split");
-  }
-
-  return [
-    {
-      groupId: "",
-      userFrom: borrower,
-      userTo: paidBy,
-      amount,
-    },
-  ];
 }
 
 // Balanceテーブル更新（upsert）

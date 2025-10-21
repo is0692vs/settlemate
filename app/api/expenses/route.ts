@@ -32,15 +32,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    // 参加者が全員グループメンバーか確認
+    // 参加者（債務者）が全員グループメンバーか確認
+    const participantIds = validated.participants.map((p) => p.userId);
     const members = await prisma.groupMember.findMany({
       where: {
         groupId: validated.groupId,
-        userId: { in: validated.participants },
+        userId: { in: [...participantIds, validated.paidBy] },
       },
     });
 
-    if (members.length !== validated.participants.length) {
+    if (members.length !== participantIds.length + 1) {
       return NextResponse.json(
         { error: "Invalid participants" },
         { status: 400 }
@@ -56,7 +57,7 @@ export async function POST(req: NextRequest) {
           paidBy: validated.paidBy,
           amount: validated.amount,
           description: validated.description,
-          participants: validated.participants,
+          participants: validated.participants, // 金額付き配列を保存
           splitType: validated.splitType,
         },
       });
@@ -67,13 +68,9 @@ export async function POST(req: NextRequest) {
           ? calculateEqualSplit(
               validated.amount,
               validated.paidBy,
-              validated.participants
+              participantIds
             )
-          : calculateManualSplit(
-              validated.amount,
-              validated.paidBy,
-              validated.participants
-            );
+          : calculateManualSplit(validated.paidBy, validated.participants);
 
       // 3. Balance更新
       await updateBalances(tx, validated.groupId, balances);

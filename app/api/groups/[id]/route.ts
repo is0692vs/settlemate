@@ -3,6 +3,12 @@ import { prisma } from "@/lib/prisma";
 import { updateGroupSchema } from "@/lib/validations/group";
 import { NextResponse } from "next/server";
 import { Prisma } from "@prisma/client";
+import { z } from "zod";
+
+const addMemberSchema = z.object({
+  action: z.literal("addMember"),
+  email: z.string().email(),
+});
 
 interface Params {
   params: Promise<{
@@ -92,7 +98,7 @@ export async function GET(_request: Request, { params }: Params) {
 
 /**
  * PATCH /api/groups/[id]
- * グループ情報を更新
+ * グループ情報を更新 / メンバー追加
  */
 export async function PATCH(request: Request, { params }: Params) {
   try {
@@ -104,7 +110,7 @@ export async function PATCH(request: Request, { params }: Params) {
 
     const { id } = await params;
 
-    // グループの存在確認と権限チェック
+    // グループの存在確認
     const group = await prisma.group.findUnique({
       where: { id },
       select: {
@@ -131,8 +137,69 @@ export async function PATCH(request: Request, { params }: Params) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    // リクエストボディをバリデーション
+    // リクエストボディを取得
     const body = await request.json();
+
+    // メンバー追加の場合
+    if (body.action === "addMember") {
+      const result = addMemberSchema.safeParse(body);
+
+      if (!result.success) {
+        return NextResponse.json(
+          { error: "Invalid request body" },
+          { status: 400 }
+        );
+      }
+
+      // メールアドレスからユーザーを検索
+      const user = await prisma.user.findUnique({
+        where: { email: result.data.email },
+      });
+
+      if (!user) {
+        return NextResponse.json({ error: "User not found" }, { status: 404 });
+      }
+
+      // 既にメンバーか確認
+      const existingMember = await prisma.groupMember.findUnique({
+        where: {
+          groupId_userId: {
+            groupId: id,
+            userId: user.id,
+          },
+        },
+      });
+
+      if (existingMember) {
+        return NextResponse.json(
+          { error: "User is already a member" },
+          { status: 400 }
+        );
+      }
+
+      // 自分自身を追加しようとしていないか確認
+      if (user.id === session.user.id) {
+        return NextResponse.json(
+          { error: "Cannot add yourself" },
+          { status: 400 }
+        );
+      }
+
+      // メンバー追加
+      await prisma.groupMember.create({
+        data: {
+          groupId: id,
+          userId: user.id,
+        },
+      });
+
+      return NextResponse.json(
+        { success: true, userId: user.id },
+        { status: 200 }
+      );
+    }
+
+    // グループ情報更新の場合
     const result = updateGroupSchema.safeParse(body);
 
     if (!result.success) {

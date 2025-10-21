@@ -35,6 +35,16 @@ export function ExpenseForm({ groupId, members }: ExpenseFormProps) {
     setError(null);
 
     try {
+      // 均等割りの場合、金額付き配列を生成
+      const debtors = members.filter((m) => m.id !== data.paidBy);
+      const perPerson = Math.floor(data.amount / members.length);
+      const remainder = data.amount % members.length;
+
+      const participants = debtors.map((member, index) => ({
+        userId: member.id,
+        amount: perPerson + (index < remainder ? 1 : 0),
+      }));
+
       const response = await fetch("/api/expenses", {
         method: "POST",
         headers: {
@@ -46,7 +56,7 @@ export function ExpenseForm({ groupId, members }: ExpenseFormProps) {
           amount: data.amount,
           paidBy: data.paidBy,
           splitType: "equal",
-          participants: members.map((m) => m.id),
+          participants,
         }),
       });
 

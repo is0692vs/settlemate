@@ -133,19 +133,21 @@ export async function DELETE(
 
     // トランザクション処理：Balance逆計算 + Expense削除
     await prisma.$transaction(async (tx) => {
+      // participants を Participant[] にキャスト
+      const participants = expense.participants as unknown as Array<{
+        userId: string;
+        amount: number;
+      }>;
+
       // Balance逆計算
       const balances =
         expense.splitType === "equal"
           ? calculateEqualSplit(
               expense.amount,
               expense.paidBy,
-              expense.participants as string[]
+              participants.map((p) => p.userId)
             )
-          : calculateManualSplit(
-              expense.amount,
-              expense.paidBy,
-              expense.participants as string[]
-            );
+          : calculateManualSplit(expense.paidBy, participants);
 
       for (const balance of balances) {
         const existing = await tx.balance.findUnique({
