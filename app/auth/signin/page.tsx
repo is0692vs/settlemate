@@ -1,3 +1,4 @@
+// app/auth/signin/page.tsx
 import { signIn } from "@/auth";
 
 export default function SignInPage() {

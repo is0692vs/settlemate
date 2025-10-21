@@ -1,3 +1,4 @@
+// app/api/settlements/route.ts
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { createSettlementSchema } from "@/lib/validations/settlement";

@@ -1,3 +1,4 @@
+// lib/api/groups.ts
 import type {
   CreateGroupInput,
   UpdateGroupInput,

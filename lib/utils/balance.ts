@@ -1,3 +1,4 @@
+// lib/utils/balance.ts
 export type BalanceUpdate = {
   groupId: string;
   userFrom: string;

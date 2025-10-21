@@ -1,3 +1,4 @@
+// components/groups/GroupCard.tsx
 import Link from "next/link";
 
 type Props = {

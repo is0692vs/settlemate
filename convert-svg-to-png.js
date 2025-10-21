@@ -1,3 +1,4 @@
+// convert-svg-to-png.js
 /**
  * SVG to PNG Icon Converter
  *

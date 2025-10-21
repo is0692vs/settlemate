@@ -1,3 +1,4 @@
+// scripts/migrate-invite-codes.ts
 import { migrateInviteCodes } from "../lib/utils/migrate-invite-codes";
 
 async function main() {
