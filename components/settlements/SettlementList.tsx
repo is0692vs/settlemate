@@ -53,9 +53,9 @@ export default function SettlementList({
   const getMethodLabel = (method: string) => {
     const labels: Record<string, string> = {
       cash: "💵 現金",
-      bank: "🏦 銀行振込",
+      bank_transfer: "🏦 銀行振込",
       paypay: "💰 PayPay",
-      linepay: "💳 LINE Pay",
+      line_pay: "💳 LINE Pay",
     };
     return labels[method] || method;
   };
