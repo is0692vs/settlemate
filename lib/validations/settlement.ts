@@ -1,11 +1,6 @@
 import { z } from "zod";
 
-export const paymentMethodEnum = z.enum([
-  "cash",
-  "bank_transfer",
-  "paypay",
-  "line_pay",
-]);
+export const paymentMethodEnum = z.enum(["cash", "bank", "paypay", "linepay"]);
 
 export const createSettlementSchema = z.object({
   groupId: z.string().min(1, "グループIDが必要です"),
