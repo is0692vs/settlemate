@@ -7,25 +7,14 @@ import GroupCard from "@/components/groups/GroupCard";
 export default async function GroupsPage() {
   const session = await auth();
 
-  console.log("=== GroupsPage Debug ===");
-  console.log("session:", session);
-  console.log("session?.user:", session?.user);
-  console.log("session?.user?.id:", session?.user?.id);
-
   if (!session?.user) {
-    console.log("Redirecting to signin - no session");
     redirect("/auth/signin");
   }
 
   const userId = session.user.id ?? session.user.email;
 
   if (!userId) {
-    console.log("Redirecting to signin - missing user identifier");
     redirect("/auth/signin");
-  }
-
-  if (!session.user.id) {
-    console.log("session.user.id is missing, fallback userId:", userId);
   }
 
   const groups = await prisma.group.findMany({
@@ -59,11 +48,18 @@ export default async function GroupsPage() {
       <div className="mx-auto max-w-6xl">
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-2xl font-bold">グループ</h1>
-          <Link href="/dashboard/groups/new">
-            <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-              新規作成
-            </button>
-          </Link>
+          <div className="flex gap-2">
+            <Link href="/dashboard">
+              <button className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
+                戻る
+              </button>
+            </Link>
+            <Link href="/dashboard/groups/new">
+              <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                新規作成
+              </button>
+            </Link>
+          </div>
         </div>
 
         {formattedGroups.length === 0 ? (

@@ -106,6 +106,11 @@ export default async function GroupDetailPage({
             <h1 className="text-3xl font-bold">{group.name}</h1>
           </div>
           <div className="flex gap-2">
+            <Link href="/dashboard/groups">
+              <button className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
+                戻る
+              </button>
+            </Link>
             <Link href={`/dashboard/groups/${group.id}/edit`}>
               <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
                 編集

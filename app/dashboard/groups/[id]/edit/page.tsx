@@ -4,6 +4,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import GroupForm from "@/components/groups/GroupForm";
 import type { CreateGroupInput } from "@/lib/validations/group";
+import Link from "next/link";
 
 async function updateGroupAction(groupId: string, data: CreateGroupInput) {
   "use server";
@@ -87,7 +88,14 @@ export default async function EditGroupPage({
   return (
     <div className="min-h-screen p-8">
       <div className="mx-auto max-w-md">
-        <h1 className="text-2xl font-bold mb-6">グループ編集</h1>
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-2xl font-bold">グループ編集</h1>
+          <Link href="/dashboard/groups">
+            <button className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
+              戻る
+            </button>
+          </Link>
+        </div>
 
         <div className="bg-white rounded-lg shadow p-6">
           <GroupForm
