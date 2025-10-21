@@ -121,7 +121,7 @@ export default function BalanceList({
               const user = balance.fromUser;
               const userName = user?.name ?? "名前未設定";
               const userImage = user?.image;
-              const initial = userName.charAt(0).toUpperCase();
+              const initial = userName ? userName.charAt(0).toUpperCase() : "?";
 
               return (
                 <div
