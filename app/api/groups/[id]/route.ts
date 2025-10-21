@@ -2,6 +2,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { updateGroupSchema } from "@/lib/validations/group";
 import { NextResponse } from "next/server";
+import { Prisma } from "@prisma/client";
 
 interface Params {
   params: Promise<{
@@ -144,7 +145,7 @@ export async function PATCH(request: Request, { params }: Params) {
     const { name, icon } = result.data;
 
     // 更新データを構築（変更されたフィールドのみ）
-    const updateData: Record<string, unknown> = {};
+    const updateData: Prisma.GroupUpdateInput = {};
     if (name !== undefined) updateData.name = name;
     if (icon !== undefined) updateData.icon = icon || null;
 
