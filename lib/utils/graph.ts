@@ -6,6 +6,17 @@ export type Balance = {
   userTo: string;
   amount: number;
   groupId: string;
+  // `BalanceList` で使用するためにリレーションを追加
+  fromUser?: {
+    id: string;
+    name: string | null;
+    image: string | null;
+  };
+  toUser?: {
+    id: string;
+    name: string | null;
+    image: string | null;
+  };
 };
 
 export type User = {
