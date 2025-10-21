@@ -7,15 +7,32 @@ import GroupCard from "@/components/groups/GroupCard";
 export default async function GroupsPage() {
   const session = await auth();
 
-  if (!session?.user?.id) {
+  console.log("=== GroupsPage Debug ===");
+  console.log("session:", session);
+  console.log("session?.user:", session?.user);
+  console.log("session?.user?.id:", session?.user?.id);
+
+  if (!session?.user) {
+    console.log("Redirecting to signin - no session");
     redirect("/auth/signin");
+  }
+
+  const userId = session.user.id ?? session.user.email;
+
+  if (!userId) {
+    console.log("Redirecting to signin - missing user identifier");
+    redirect("/auth/signin");
+  }
+
+  if (!session.user.id) {
+    console.log("session.user.id is missing, fallback userId:", userId);
   }
 
   const groups = await prisma.group.findMany({
     where: {
       members: {
         some: {
-          userId: session.user.id,
+          userId,
         },
       },
     },
