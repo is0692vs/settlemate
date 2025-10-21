@@ -1,0 +1,19 @@
+<svg width="192" height="192" xmlns="http://www.w3.org/2000/svg">
+  <!-- 背景 -->
+  <rect width="192" height="192" fill="#3b82f6"/>
+  
+  <!-- 白い円 -->
+  <circle cx="96" cy="96" r="54.857142857142854" fill="#ffffff"/>
+  
+  <!-- テキスト -->
+  <text 
+    x="96" 
+    y="96" 
+    font-size="48" 
+    font-weight="bold" 
+    font-family="sans-serif" 
+    fill="#3b82f6" 
+    text-anchor="middle" 
+    dominant-baseline="central"
+  >SM</text>
+</svg>
