@@ -126,6 +126,7 @@ model Settlement {
   amount     Int
   method     String   // "cash", "bank", "paypay", "linepay"
   settledAt  DateTime @default(now())
+  description String?
   
   group      Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
   payer      User     @relation("SettlementPayer", fields: [paidBy], references: [id])
