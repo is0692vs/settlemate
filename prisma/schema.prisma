@@ -50,7 +50,7 @@ model User {
   email          String        @unique
   emailVerified  DateTime?
   image          String?
-  paymentMethods Json?         // 返済方法の設定
+  acceptedPaymentMethods Json  @default("[\"cash\",\"bank_transfer\",\"paypay\",\"line_pay\"]") // 受付可能な決済方法
   
   accounts       Account[]
   sessions       Session[]

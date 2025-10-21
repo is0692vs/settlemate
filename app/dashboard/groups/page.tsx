@@ -53,6 +53,11 @@ export default async function GroupsPage() {
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-2xl font-bold">グループ</h1>
           <div className="flex gap-2">
+            <Link href="/dashboard/profile">
+              <button className="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-100">
+                マイページ
+              </button>
+            </Link>
             <Link href="/dashboard">
               <button className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
                 戻る

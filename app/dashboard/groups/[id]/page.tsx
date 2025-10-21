@@ -86,7 +86,14 @@ export default async function GroupDetailPage({
       balances: {
         include: {
           fromUser: { select: { id: true, name: true, image: true } },
-          toUser: { select: { id: true, name: true, image: true } },
+          toUser: {
+            select: {
+              id: true,
+              name: true,
+              image: true,
+              acceptedPaymentMethods: true,
+            },
+          },
         },
       },
     },

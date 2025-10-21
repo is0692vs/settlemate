@@ -1,12 +1,16 @@
 // lib/validations/settlement.ts
 import { z } from "zod";
+import {
+  PAYMENT_METHOD_VALUES,
+  type PaymentMethodValue,
+} from "@/lib/constants/payment-methods";
 
-export const paymentMethodEnum = z.enum([
-  "cash",
-  "bank_transfer",
-  "paypay",
-  "line_pay",
-]);
+const paymentMethodEnumValues = PAYMENT_METHOD_VALUES as [
+  PaymentMethodValue,
+  ...PaymentMethodValue[]
+];
+
+export const paymentMethodEnum = z.enum(paymentMethodEnumValues);
 
 export const createSettlementSchema = z.object({
   groupId: z.string().min(1, "グループIDが必要です"),
