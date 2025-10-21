@@ -75,13 +75,25 @@ export default function SettlementForm({
     !form.formState.errors.amount &&
     !form.formState.errors.method;
 
+  // バリデーション状態をチェック
+  const validationStatus = {
+    userToSelected: !!selectedUserTo,
+    amountIsPositive: selectedAmount > 0,
+    amountNotExceeded: selectedAmount <= maxAmount,
+    noErrors: !form.formState.errors.userTo && !form.formState.errors.amount && !form.formState.errors.method,
+  };
+
   const onSubmit = async (data: SettlementFormData) => {
     try {
       setIsSubmitting(true);
       setError(null);
 
       // クライアント側での最終チェック
-      if (!selectedUserTo || selectedAmount <= 0 || selectedAmount > maxAmount) {
+      if (
+        !selectedUserTo ||
+        selectedAmount <= 0 ||
+        selectedAmount > maxAmount
+      ) {
         setError("入力内容を確認してください");
         setIsSubmitting(false);
         return;
@@ -203,6 +215,37 @@ export default function SettlementForm({
       {error && (
         <div className="p-3 bg-red-50 border border-red-200 rounded-md">
           <p className="text-red-600 text-sm">{error}</p>
+        </div>
+      )}
+
+      {/* バリデーション条件の表示（無効な場合のみ）*/}
+      {!isFormValid && (
+        <div className="p-3 bg-amber-50 border border-amber-200 rounded-md">
+          <p className="text-sm font-medium text-amber-900 mb-2">
+            ⚠️ 以下の条件を満たしてください：
+          </p>
+          <ul className="space-y-1 text-xs text-amber-800">
+            <li
+              className={validationStatus.userToSelected ? "line-through text-gray-500" : ""}
+            >
+              ✓ 返済先を選択
+            </li>
+            <li
+              className={validationStatus.amountIsPositive ? "line-through text-gray-500" : ""}
+            >
+              ✓ 金額は1円以上
+            </li>
+            <li
+              className={validationStatus.amountNotExceeded ? "line-through text-gray-500" : "text-red-600 font-semibold"}
+            >
+              ✓ 金額は残高{selectedUserTo ? `（¥${maxAmount.toLocaleString()}）` : ""}以下
+            </li>
+            <li
+              className={validationStatus.noErrors ? "line-through text-gray-500" : ""}
+            >
+              ✓ すべてのフィールドが正しく入力
+            </li>
+          </ul>
         </div>
       )}
 
