@@ -80,7 +80,10 @@ export default function SettlementForm({
     userToSelected: !!selectedUserTo,
     amountIsPositive: selectedAmount > 0,
     amountNotExceeded: selectedAmount <= maxAmount,
-    noErrors: !form.formState.errors.userTo && !form.formState.errors.amount && !form.formState.errors.method,
+    noErrors:
+      !form.formState.errors.userTo &&
+      !form.formState.errors.amount &&
+      !form.formState.errors.method,
   };
 
   const onSubmit = async (data: SettlementFormData) => {
@@ -226,22 +229,37 @@ export default function SettlementForm({
           </p>
           <ul className="space-y-1 text-xs text-amber-800">
             <li
-              className={validationStatus.userToSelected ? "line-through text-gray-500" : ""}
+              className={
+                validationStatus.userToSelected
+                  ? "line-through text-gray-500"
+                  : ""
+              }
             >
               ✓ 返済先を選択
             </li>
             <li
-              className={validationStatus.amountIsPositive ? "line-through text-gray-500" : ""}
+              className={
+                validationStatus.amountIsPositive
+                  ? "line-through text-gray-500"
+                  : ""
+              }
             >
               ✓ 金額は1円以上
             </li>
             <li
-              className={validationStatus.amountNotExceeded ? "line-through text-gray-500" : "text-red-600 font-semibold"}
+              className={
+                validationStatus.amountNotExceeded
+                  ? "line-through text-gray-500"
+                  : "text-red-600 font-semibold"
+              }
             >
-              ✓ 金額は残高{selectedUserTo ? `（¥${maxAmount.toLocaleString()}）` : ""}以下
+              ✓ 金額は残高
+              {selectedUserTo ? `（¥${maxAmount.toLocaleString()}）` : ""}以下
             </li>
             <li
-              className={validationStatus.noErrors ? "line-through text-gray-500" : ""}
+              className={
+                validationStatus.noErrors ? "line-through text-gray-500" : ""
+              }
             >
               ✓ すべてのフィールドが正しく入力
             </li>
