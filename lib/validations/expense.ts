@@ -10,17 +10,21 @@ export const participantSchema = z.object({
 export const createExpenseSchema = z
   .object({
     groupId: z.string().cuid(),
-    amount: z.number().int().positive().max(10000000), // 1000万円まで
+    amount: z.number().int().positive().max(10000000),
     description: z.string().max(200).optional(),
-    participants: z.array(participantSchema).min(1), // 最低1人（払った人以外）
+    participants: z.array(participantSchema).min(1),
     splitType: z.enum(["equal", "manual"]),
     paidBy: z.string().cuid(),
   })
   .refine(
     (data) => {
-      // participants の合計金額が amount と一致するか検証
-      const total = data.participants.reduce((sum, p) => sum + p.amount, 0);
-      return total === data.amount;
+      // 手動の場合のみ合計チェック
+      if (data.splitType === "manual") {
+        const total = data.participants.reduce((sum, p) => sum + p.amount, 0);
+        return total === data.amount;
+      }
+      // 均等割りの場合はチェック不要（フロントで自動計算）
+      return true;
     },
     {
       message: "参加者の金額合計が総額と一致しません",

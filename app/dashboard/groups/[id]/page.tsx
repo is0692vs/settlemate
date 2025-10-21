@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import DeleteGroupButton from "@/components/groups/DeleteGroupButton";
+import { InviteLink } from "@/components/groups/InviteLink";
 import { ExpenseList } from "@/components/expenses/ExpenseList";
 
 async function deleteGroupAction(groupId: string) {
@@ -130,6 +131,10 @@ export default async function GroupDetailPage({
             </Link>
             <DeleteGroupButton onDelete={deleteAction} />
           </div>
+        </div>
+
+        <div className="bg-white rounded-lg shadow p-6 mb-6">
+          <InviteLink inviteCode={group.inviteCode} />
         </div>
 
         <div className="bg-white rounded-lg shadow p-6 mb-6">

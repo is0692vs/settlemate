@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { createGroupSchema } from "@/lib/validations/group";
+import { generateInviteCode } from "@/lib/utils/invite-code";
 import { NextResponse } from "next/server";
 
 /**
@@ -30,11 +31,28 @@ export async function POST(request: Request) {
 
     // トランザクションでグループ作成とメンバー追加を実行
     const group = await prisma.$transaction(async (tx) => {
+      // 一意な招待コードを生成
+      let inviteCode = generateInviteCode();
+      let isUnique = false;
+
+      while (!isUnique) {
+        const existing = await tx.group.findUnique({
+          where: { inviteCode },
+        });
+
+        if (!existing) {
+          isUnique = true;
+        } else {
+          inviteCode = generateInviteCode();
+        }
+      }
+
       const createdGroup = await tx.group.create({
         data: {
           name,
           icon: icon || null,
           createdBy: userId,
+          inviteCode,
         },
       });
 

@@ -5,7 +5,6 @@ import { prisma } from "@/lib/prisma";
 import GroupForm from "@/components/groups/GroupForm";
 import type { CreateGroupInput } from "@/lib/validations/group";
 import Link from "next/link";
-import { AddMemberForm } from "@/components/groups/AddMemberForm";
 
 async function updateGroupAction(groupId: string, data: CreateGroupInput) {
   "use server";
@@ -108,11 +107,6 @@ export default async function EditGroupPage({
             onSubmit={updateAction}
             submitLabel="更新"
           />
-        </div>
-
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-lg font-semibold mb-4">メンバー管理</h2>
-          <AddMemberForm groupId={group.id} />
         </div>
       </div>
     </div>
