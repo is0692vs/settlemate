@@ -1,6 +1,8 @@
 "use server";
 
 import { auth } from "@/auth";
+import { prisma } from "@/lib/prisma";
+import { createSettlementSchema } from "@/lib/validations/settlement";
 import { revalidatePath } from "next/cache";
 
 export async function createSettlement(formData: {
@@ -15,21 +17,95 @@ export async function createSettlement(formData: {
     throw new Error("Unauthorized");
   }
 
-  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/settlements`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(formData),
-  });
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || "返済記録の作成に失敗しました");
+  const result = createSettlementSchema.safeParse(formData);
+  if (!result.success) {
+    throw new Error("Validation error");
   }
 
+  const { groupId, userTo, amount, method, description } = result.data;
+  const userId = session.user.id;
+
+  // グループメンバーシップチェック
+  const membership = await prisma.groupMember.findUnique({
+    where: {
+      groupId_userId: {
+        groupId,
+        userId,
+      },
+    },
+  });
+
+  if (!membership) {
+    throw new Error("Forbidden: Not a group member");
+  }
+
+  // Balance検索
+  const balance = await prisma.balance.findUnique({
+    where: {
+      groupId_userFrom_userTo: {
+        groupId,
+        userFrom: userId,
+        userTo,
+      },
+    },
+  });
+
+  if (!balance) {
+    throw new Error("残高が存在しません");
+  }
+
+  // 残高チェック
+  if (balance.amount < amount) {
+    throw new Error(
+      `返済金額が残高を超過しています（残高: ¥${balance.amount}）`
+    );
+  }
+
+  // トランザクション処理
+  const settlement = await prisma.$transaction(async (tx) => {
+    const newSettlement = await tx.settlement.create({
+      data: {
+        groupId,
+        paidBy: userId,
+        paidTo: userTo,
+        amount,
+        method,
+        ...(description && { description }),
+      },
+    });
+
+    const newAmount = balance.amount - amount;
+
+    if (newAmount === 0) {
+      await tx.balance.delete({
+        where: {
+          groupId_userFrom_userTo: {
+            groupId,
+            userFrom: userId,
+            userTo,
+          },
+        },
+      });
+    } else {
+      await tx.balance.update({
+        where: {
+          groupId_userFrom_userTo: {
+            groupId,
+            userFrom: userId,
+            userTo,
+          },
+        },
+        data: {
+          amount: newAmount,
+        },
+      });
+    }
+
+    return newSettlement;
+  });
+
   revalidatePath(`/dashboard/groups/${formData.groupId}`);
-  return await response.json();
+  return settlement;
 }
 
 export async function cancelSettlement(settlementId: string, groupId: string) {
@@ -38,17 +114,47 @@ export async function cancelSettlement(settlementId: string, groupId: string) {
     throw new Error("Unauthorized");
   }
 
-  const response = await fetch(
-    `${process.env.NEXTAUTH_URL}/api/settlements/${settlementId}`,
-    {
-      method: "DELETE",
-    }
-  );
+  // Settlement検索
+  const settlement = await prisma.settlement.findUnique({
+    where: { id: settlementId },
+  });
 
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || "返済記録の取消に失敗しました");
+  if (!settlement) {
+    throw new Error("Settlement not found");
   }
+
+  // 権限チェック
+  if (settlement.paidBy !== session.user.id) {
+    throw new Error("Forbidden: Only the payer can cancel");
+  }
+
+  // トランザクション処理
+  await prisma.$transaction(async (tx) => {
+    await tx.settlement.delete({
+      where: { id: settlementId },
+    });
+
+    await tx.balance.upsert({
+      where: {
+        groupId_userFrom_userTo: {
+          groupId: settlement.groupId,
+          userFrom: settlement.paidBy,
+          userTo: settlement.paidTo,
+        },
+      },
+      update: {
+        amount: {
+          increment: settlement.amount,
+        },
+      },
+      create: {
+        groupId: settlement.groupId,
+        userFrom: settlement.paidBy,
+        userTo: settlement.paidTo,
+        amount: settlement.amount,
+      },
+    });
+  });
 
   revalidatePath(`/dashboard/groups/${groupId}`);
 }
