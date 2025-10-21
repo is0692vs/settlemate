@@ -22,11 +22,12 @@ type BalanceGraphProps = {
 };
 
 export default function BalanceGraph({ nodes, edges }: BalanceGraphProps) {
-  // 空データ対応
-  if (nodes.length === 0 || edges.length === 0) {
+  // 空データ対応：ノード（ユーザー）が0の場合のみ空状態を表示
+  // エッジ（残高）が0でもノードは表示される（グループ初期状態やまだ支出がない場合）
+  if (nodes.length === 0) {
     return (
       <div className="h-[400px] md:h-[600px] flex items-center justify-center bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
-        <p className="text-gray-500">残高データがありません</p>
+        <p className="text-gray-500">メンバーがいません</p>
       </div>
     );
   }
