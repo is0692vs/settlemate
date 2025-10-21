@@ -1,3 +1,14 @@
+/**
+ * SVG to PNG Icon Converter
+ *
+ * Prerequisites:
+ * - Run: pnpm install (sharp is included as a devDependency)
+ * - Or: pnpm add -D sharp
+ *
+ * Usage:
+ * node convert-svg-to-png.js
+ */
+
 const sharp = require("sharp");
 const path = require("path");
 const fs = require("fs");
