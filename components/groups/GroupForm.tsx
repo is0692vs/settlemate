@@ -32,7 +32,7 @@ export default function GroupForm({
   const onValidSubmit = handleSubmit(async (formData) => {
     setSubmitError(null);
     try {
-      await onSubmit(formData as CreateGroupInput);
+      await onSubmit(formData);
     } catch (err) {
       const message = err instanceof Error ? err.message : "送信に失敗しました";
       setSubmitError(message);
