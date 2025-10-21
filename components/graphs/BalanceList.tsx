@@ -1,3 +1,4 @@
+// components/graphs/BalanceList.tsx
 "use client";
 
 import Image from "next/image";

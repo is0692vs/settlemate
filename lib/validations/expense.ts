@@ -1,3 +1,4 @@
+// lib/validations/expense.ts
 import { z } from "zod";
 
 // 参加者（債務者）のスキーマ

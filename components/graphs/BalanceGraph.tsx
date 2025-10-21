@@ -1,3 +1,4 @@
+// components/graphs/BalanceGraph.tsx
 "use client";
 
 import { ReactFlow, Background, Controls, MiniMap } from "@xyflow/react";

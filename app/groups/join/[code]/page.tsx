@@ -1,3 +1,4 @@
+// app/groups/join/[code]/page.tsx
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";

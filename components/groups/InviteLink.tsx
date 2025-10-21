@@ -1,3 +1,4 @@
+// components/groups/InviteLink.tsx
 "use client";
 
 import { useState } from "react";

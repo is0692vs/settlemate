@@ -1,3 +1,4 @@
+// app/dashboard/groups/new/page.tsx
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";

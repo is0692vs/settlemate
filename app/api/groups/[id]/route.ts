@@ -1,3 +1,4 @@
+// app/api/groups/[id]/route.ts
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { updateGroupSchema } from "@/lib/validations/group";

@@ -1,3 +1,4 @@
+// components/expenses/ExpenseList.tsx
 import type { Expense, User } from "@prisma/client";
 import { ExpenseCard } from "./ExpenseCard";
 

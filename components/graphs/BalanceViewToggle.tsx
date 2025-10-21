@@ -1,3 +1,4 @@
+// components/graphs/BalanceViewToggle.tsx
 "use client";
 
 interface BalanceViewToggleProps {

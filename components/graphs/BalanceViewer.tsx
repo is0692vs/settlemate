@@ -1,3 +1,4 @@
+// components/graphs/BalanceViewer.tsx
 "use client";
 
 import { useState } from "react";

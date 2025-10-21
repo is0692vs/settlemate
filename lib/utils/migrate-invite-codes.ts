@@ -1,3 +1,4 @@
+// lib/utils/migrate-invite-codes.ts
 import { prisma } from "@/lib/prisma";
 import { generateInviteCode } from "./invite-code";
 

@@ -1,3 +1,4 @@
+// lib/validations/settlement.ts
 import { z } from "zod";
 
 export const paymentMethodEnum = z.enum([

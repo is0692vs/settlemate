@@ -1,3 +1,4 @@
+// app/dashboard/groups/[id]/expenses/new/page.tsx
 import { prisma } from "@/lib/prisma";
 import { notFound, redirect } from "next/navigation";
 import { auth } from "@/auth";

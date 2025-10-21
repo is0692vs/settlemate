@@ -1,3 +1,4 @@
+// components/graphs/DebtEdge.tsx
 "use client";
 
 import { memo } from "react";
