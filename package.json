@@ -7,6 +7,7 @@
     "build": "prisma generate && next build --turbopack",
     "start": "next start",
     "lint": "next lint",
+    "typecheck": "prisma generate && tsc --noEmit",
     "migrate:invite-codes": "tsx scripts/migrate-invite-codes.ts"
   },
   "dependencies": {
