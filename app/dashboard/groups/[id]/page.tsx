@@ -142,7 +142,7 @@ export default async function GroupDetailPage({
             メンバー ({members.length})
           </h2>
           {members.length === 0 ? (
-            <p className="text-gray-500">メンバーがいません</p>
+            <p className="text-gray-700">メンバーがいません</p>
           ) : (
             <ul className="space-y-2">
               {members.map((member) => (
@@ -152,7 +152,7 @@ export default async function GroupDetailPage({
                 >
                   <div>
                     <p className="font-medium">{member.name}</p>
-                    <p className="text-sm text-gray-500">{member.email}</p>
+                    <p className="text-sm text-gray-700">{member.email}</p>
                   </div>
                 </li>
               ))}

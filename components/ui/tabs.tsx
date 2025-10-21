@@ -54,7 +54,7 @@ export function TabsTrigger({
       className={`px-4 py-2 ${
         isActive
           ? "border-b-2 border-blue-600 text-blue-600 font-medium"
-          : "text-gray-600 hover:text-gray-900"
+          : "text-gray-700 hover:text-gray-900"
       }`}
     >
       {children}

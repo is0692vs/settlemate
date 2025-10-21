@@ -211,13 +211,13 @@ export function ManualExpenseForm({
           </p>
         )}
         {!paidBy && (
-          <p className="text-gray-500 text-sm mt-1">
+          <p className="text-gray-700 text-sm mt-1">
             先に支払った人を選択してください
           </p>
         )}
       </div>
 
-      <div className="bg-gray-100 p-3 rounded">
+      <div className="bg-gray-200 p-3 rounded">
         <p className="text-sm">
           債務合計: ¥{totalDebt.toLocaleString()} / 総額: ¥
           {totalAmount.toLocaleString()}
