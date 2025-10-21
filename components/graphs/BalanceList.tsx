@@ -43,7 +43,7 @@ export default function BalanceList({
     (sum, balance) => sum + balance.amount,
     0
   );
-  const difference = totalToPay - totalToReceive;
+  const difference = totalToReceive - totalToPay;
 
   // 空データ対応
   if (toPay.length === 0 && toReceive.length === 0) {
