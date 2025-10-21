@@ -11,7 +11,7 @@ export default async function GroupsPage() {
     redirect("/auth/signin");
   }
 
-  const userId = session.user.id ?? session.user.email;
+  const userId = session.user.id;
 
   if (!userId) {
     redirect("/auth/signin");
