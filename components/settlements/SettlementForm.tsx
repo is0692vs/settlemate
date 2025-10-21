@@ -253,8 +253,7 @@ export default function SettlementForm({
                   : "text-red-600 font-semibold"
               }
             >
-              ✓ 金額は残高
-              {selectedUserTo ? `（¥${maxAmount.toLocaleString()}）` : ""}以下
+              {`✓ 金額は残高${selectedUserTo ? `（¥${maxAmount.toLocaleString()}）` : ""}以下`}
             </li>
             <li
               className={
