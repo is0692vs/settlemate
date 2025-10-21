@@ -49,9 +49,11 @@ export default async function GroupDetailPage({
     redirect("/auth/signin");
   }
 
+  const { id } = await Promise.resolve(params);
+
   const group = await prisma.group.findFirst({
     where: {
-      id: params.id,
+      id,
       members: {
         some: {
           userId: session.user.id,
