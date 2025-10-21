@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { generateInviteCode } from "@/lib/utils/invite-code";
 import GroupForm from "@/components/groups/GroupForm";
 import type { CreateGroupInput } from "@/lib/validations/group";
 import Link from "next/link";
@@ -19,11 +20,28 @@ async function createGroupAction(data: CreateGroupInput) {
   const userId = session.user.id;
 
   await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+    // 一意な招待コードを生成
+    let inviteCode = generateInviteCode();
+    let isUnique = false;
+
+    while (!isUnique) {
+      const existing = await tx.group.findUnique({
+        where: { inviteCode },
+      });
+
+      if (!existing) {
+        isUnique = true;
+      } else {
+        inviteCode = generateInviteCode();
+      }
+    }
+
     const newGroup = await tx.group.create({
       data: {
         name: data.name,
         icon: data.icon || null,
         createdBy: userId,
+        inviteCode,
       },
     });
 
