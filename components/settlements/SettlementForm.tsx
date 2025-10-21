@@ -12,7 +12,7 @@ const settlementFormSchema = z.object({
     .number()
     .min(1, "金額は1円以上である必要があります")
     .int("金額は整数である必要があります"),
-  method: z.enum(["cash", "bank", "paypay", "linepay"]),
+  method: z.enum(["cash", "bank_transfer", "paypay", "line_pay"]),
   description: z
     .string()
     .max(200, "説明は200文字以内である必要があります")
@@ -142,9 +142,9 @@ export default function SettlementForm({
         <div className="space-y-2">
           {[
             { value: "cash", label: "💵 現金" },
-            { value: "bank", label: "🏦 銀行振込" },
+            { value: "bank_transfer", label: "🏦 銀行振込" },
             { value: "paypay", label: "💰 PayPay" },
-            { value: "linepay", label: "💳 LINE Pay" },
+            { value: "line_pay", label: "💳 LINE Pay" },
           ].map((method) => (
             <label key={method.value} className="flex items-center">
               <input
