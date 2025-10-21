@@ -1,29 +1,29 @@
-# PWA対応について
+# PWA 対応について
 
 ## 概要
 
-SettleMateはPWA（Progressive Web App）として実装されており、スマートフォンのホーム画面に追加してアプリのように使用できます。
+SettleMate は PWA（Progressive Web App）として実装されており、スマートフォンのホーム画面に追加してアプリのように使用できます。
 
 ## 特徴
 
-- 📱 **ホーム画面に追加可能**: iOS、Androidどちらでもホーム画面に追加できます
+- 📱 **ホーム画面に追加可能**: iOS、Android どちらでもホーム画面に追加できます
 - 🚀 **スタンドアロンモード**: アドレスバーなしでアプリライクな体験
-- 🎨 **カスタムアイコン**: SettleMateのオリジナルアイコンが表示されます
-- ⚡ **高速動作**: Service Workerによるキャッシュで高速に動作
+- 🎨 **カスタムアイコン**: SettleMate のオリジナルアイコンが表示されます
+- ⚡ **高速動作**: Service Worker によるキャッシュで高速に動作
 
 ## ホーム画面への追加方法
 
 ### iOS (Safari)
 
-1. Safariでアプリを開く
+1. Safari でアプリを開く
 2. 画面下部の「シェア」ボタンをタップ
 3. 「ホーム画面に追加」を選択
 4. 「追加」をタップ
 
 ### Android (Chrome)
 
-1. Chromeでアプリを開く
-2. 画面右上のメニュー（3点）をタップ
+1. Chrome でアプリを開く
+2. 画面右上のメニュー（3 点）をタップ
 3. 「ホーム画面に追加」を選択
 4. 「追加」をタップ
 
@@ -41,9 +41,9 @@ SettleMateはPWA（Progressive Web App）として実装されており、スマ
 
 ## 開発時の注意
 
-- 開発環境（`NODE_ENV=development`）ではService Workerは無効
-- 本番ビルド（`pnpm build`）でService Workerファイルが生成される
-- Service Workerファイル（`sw.js`など）は`.gitignore`に含まれる
+- 開発環境（`NODE_ENV=development`）では Service Worker は無効
+- 本番ビルド（`pnpm build`）で Service Worker ファイルが生成される
+- Service Worker ファイル（`sw.js`など）は`.gitignore`に含まれる
 
 ## 確認方法
 
@@ -54,14 +54,15 @@ pnpm build
 pnpm start
 ```
 
-Chrome DevToolsの「Application」タブで以下を確認：
+Chrome DevTools の「Application」タブで以下を確認：
+
 - Service Workers: 登録されているか
 - Manifest: マニフェストが正しく読み込まれているか
 - Storage: キャッシュが動作しているか
 
 ### 本番環境で確認
 
-Vercelにデプロイ後、スマートフォンでアクセスして実際にホーム画面に追加できるか確認してください。
+Vercel にデプロイ後、スマートフォンでアクセスして実際にホーム画面に追加できるか確認してください。
 
 ## アイコンの再生成
 

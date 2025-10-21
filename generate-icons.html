@@ -1,77 +1,88 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Generate SettleMate Icons</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      padding: 20px;
-      text-align: center;
-    }
-    canvas {
-      display: none;
-    }
-    button {
-      margin: 10px;
-      padding: 10px 20px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-  </style>
-</head>
-<body>
-  <h1>SettleMate Icon Generator</h1>
-  <p>以下のボタンをクリックして、各サイズのアイコンをダウンロードしてください。</p>
-  <p>ダウンロードしたファイルを <code>public/</code> ディレクトリに配置してください。</p>
-  
-  <button onclick="createIcon(192, 'icon-192x192.png')">192x192をダウンロード</button>
-  <button onclick="createIcon(512, 'icon-512x512.png')">512x512をダウンロード</button>
-  <button onclick="createIcon(180, 'apple-touch-icon.png')">180x180をダウンロード</button>
-  <button onclick="downloadAll()">全てダウンロード</button>
-  
-  <canvas id="canvas"></canvas>
-  
-  <script>
-    function createIcon(size, filename) {
-      const canvas = document.getElementById('canvas');
-      canvas.width = size;
-      canvas.height = size;
-      const ctx = canvas.getContext('2d');
-      
-      // 背景色（青）
-      ctx.fillStyle = '#3b82f6';
-      ctx.fillRect(0, 0, size, size);
-      
-      // 白い円（コインのイメージ）
-      ctx.fillStyle = '#ffffff';
-      ctx.beginPath();
-      ctx.arc(size/2, size/2, size/3.5, 0, 2 * Math.PI);
-      ctx.fill();
-      
-      // テキスト「SM」
-      ctx.fillStyle = '#3b82f6';
-      ctx.font = `bold ${size/4}px sans-serif`;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText('SM', size/2, size/2);
-      
-      // ダウンロード
-      canvas.toBlob((blob) => {
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = filename;
-        a.click();
-        URL.revokeObjectURL(url);
-        console.log(`✓ ${filename} をダウンロードしました`);
-      });
-    }
-    
-    function downloadAll() {
-      createIcon(192, 'icon-192x192.png');
-      setTimeout(() => createIcon(512, 'icon-512x512.png'), 200);
-      setTimeout(() => createIcon(180, 'apple-touch-icon.png'), 400);
-    }
-  </script>
-</body>
+  <head>
+    <title>Generate SettleMate Icons</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        padding: 20px;
+        text-align: center;
+      }
+      canvas {
+        display: none;
+      }
+      button {
+        margin: 10px;
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>SettleMate Icon Generator</h1>
+    <p>
+      以下のボタンをクリックして、各サイズのアイコンをダウンロードしてください。
+    </p>
+    <p>
+      ダウンロードしたファイルを
+      <code>public/</code> ディレクトリに配置してください。
+    </p>
+
+    <button onclick="createIcon(192, 'icon-192x192.png')">
+      192x192をダウンロード
+    </button>
+    <button onclick="createIcon(512, 'icon-512x512.png')">
+      512x512をダウンロード
+    </button>
+    <button onclick="createIcon(180, 'apple-touch-icon.png')">
+      180x180をダウンロード
+    </button>
+    <button onclick="downloadAll()">全てダウンロード</button>
+
+    <canvas id="canvas"></canvas>
+
+    <script>
+      function createIcon(size, filename) {
+        const canvas = document.getElementById("canvas");
+        canvas.width = size;
+        canvas.height = size;
+        const ctx = canvas.getContext("2d");
+
+        // 背景色（青）
+        ctx.fillStyle = "#3b82f6";
+        ctx.fillRect(0, 0, size, size);
+
+        // 白い円（コインのイメージ）
+        ctx.fillStyle = "#ffffff";
+        ctx.beginPath();
+        ctx.arc(size / 2, size / 2, size / 3.5, 0, 2 * Math.PI);
+        ctx.fill();
+
+        // テキスト「SM」
+        ctx.fillStyle = "#3b82f6";
+        ctx.font = `bold ${size / 4}px sans-serif`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText("SM", size / 2, size / 2);
+
+        // ダウンロード
+        canvas.toBlob((blob) => {
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = filename;
+          a.click();
+          URL.revokeObjectURL(url);
+          console.log(`✓ ${filename} をダウンロードしました`);
+        });
+      }
+
+      function downloadAll() {
+        createIcon(192, "icon-192x192.png");
+        setTimeout(() => createIcon(512, "icon-512x512.png"), 200);
+        setTimeout(() => createIcon(180, "apple-touch-icon.png"), 400);
+      }
+    </script>
+  </body>
 </html>
