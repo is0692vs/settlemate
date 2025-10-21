@@ -62,16 +62,17 @@ model User {
 }
 
 model Group {
-  id        String        @id @default(cuid())
-  name      String
-  icon      String?       // 絵文字
-  createdBy String
-  createdAt DateTime      @default(now())
+  id         String        @id @default(cuid())
+  name       String
+  icon       String?       // 絵文字
+  createdBy  String
+  createdAt  DateTime      @default(now())
+  inviteCode String?       @unique // 招待コード
   
-  creator   User          @relation("GroupCreator", fields: [createdBy], references: [id])
-  members   GroupMember[]
-  expenses  Expense[]
-  balances  Balance[]
+  creator    User          @relation("GroupCreator", fields: [createdBy], references: [id])
+  members    GroupMember[]
+  expenses   Expense[]
+  balances   Balance[]
   settlements Settlement[]
 }
 

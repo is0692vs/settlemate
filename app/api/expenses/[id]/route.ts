@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { updateExpenseSchema } from "@/lib/validations/expense";
+import type { Prisma } from "@prisma/client";
 import { calculateEqualSplit, calculateManualSplit } from "@/lib/utils/balance";
 
 // GET: 詳細取得
@@ -132,20 +133,22 @@ export async function DELETE(
     }
 
     // トランザクション処理：Balance逆計算 + Expense削除
-    await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+      // participants を Participant[] にキャスト
+      const participants = expense.participants as unknown as Array<{
+        userId: string;
+        amount: number;
+      }>;
+
       // Balance逆計算
       const balances =
         expense.splitType === "equal"
           ? calculateEqualSplit(
               expense.amount,
               expense.paidBy,
-              expense.participants as string[]
+              participants.map((p) => p.userId)
             )
-          : calculateManualSplit(
-              expense.amount,
-              expense.paidBy,
-              expense.participants as string[]
-            );
+          : calculateManualSplit(expense.paidBy, participants);
 
       for (const balance of balances) {
         const existing = await tx.balance.findUnique({

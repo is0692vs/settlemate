@@ -87,10 +87,10 @@ export default async function EditGroupPage({
 
   return (
     <div className="min-h-screen p-8">
-      <div className="mx-auto max-w-md">
-        <div className="flex items-center justify-between mb-6">
+      <div className="mx-auto max-w-md space-y-6">
+        <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold">グループ編集</h1>
-          <Link href="/dashboard/groups">
+          <Link href={`/dashboard/groups/${group.id}`}>
             <button className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
               戻る
             </button>
@@ -98,6 +98,7 @@ export default async function EditGroupPage({
         </div>
 
         <div className="bg-white rounded-lg shadow p-6">
+          <h2 className="text-lg font-semibold mb-4">グループ情報</h2>
           <GroupForm
             defaultValues={{
               name: group.name,

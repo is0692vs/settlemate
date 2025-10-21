@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import GroupForm from "@/components/groups/GroupForm";
 import type { CreateGroupInput } from "@/lib/validations/group";
 import Link from "next/link";
+import type { Prisma } from "@prisma/client";
 
 async function createGroupAction(data: CreateGroupInput) {
   "use server";
@@ -17,7 +18,7 @@ async function createGroupAction(data: CreateGroupInput) {
 
   const userId = session.user.id;
 
-  await prisma.$transaction(async (tx) => {
+  await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
     const newGroup = await tx.group.create({
       data: {
         name: data.name,

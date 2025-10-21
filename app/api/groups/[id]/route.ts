@@ -2,7 +2,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { updateGroupSchema } from "@/lib/validations/group";
 import { NextResponse } from "next/server";
-import { Prisma } from "@prisma/client";
+import type { Prisma } from "@prisma/client";
 
 interface Params {
   params: Promise<{
@@ -92,7 +92,7 @@ export async function GET(_request: Request, { params }: Params) {
 
 /**
  * PATCH /api/groups/[id]
- * グループ情報を更新
+ * グループ情報を更新 / メンバー追加
  */
 export async function PATCH(request: Request, { params }: Params) {
   try {
@@ -104,7 +104,7 @@ export async function PATCH(request: Request, { params }: Params) {
 
     const { id } = await params;
 
-    // グループの存在確認と権限チェック
+    // グループの存在確認
     const group = await prisma.group.findUnique({
       where: { id },
       select: {
@@ -131,8 +131,10 @@ export async function PATCH(request: Request, { params }: Params) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    // リクエストボディをバリデーション
+    // リクエストボディを取得
     const body = await request.json();
+
+    // グループ情報更新の場合
     const result = updateGroupSchema.safeParse(body);
 
     if (!result.success) {
