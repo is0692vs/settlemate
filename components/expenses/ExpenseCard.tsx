@@ -1,6 +1,6 @@
 "use client";
 
-import { Expense, User } from "@prisma/client";
+import type { Expense, User } from "@prisma/client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 

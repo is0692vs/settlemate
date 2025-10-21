@@ -4,7 +4,7 @@ import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
-import { User } from "@prisma/client";
+import type { User } from "@prisma/client";
 import { useState } from "react";
 
 const debtorSchema = z.object({

@@ -1,4 +1,4 @@
-import { Expense, User } from "@prisma/client";
+import type { Expense, User } from "@prisma/client";
 import { ExpenseCard } from "./ExpenseCard";
 
 type ExpenseWithPayer = Expense & {
