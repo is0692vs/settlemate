@@ -19,7 +19,10 @@ export async function createSettlement(formData: {
 
   const result = createSettlementSchema.safeParse(formData);
   if (!result.success) {
-    throw new Error("Validation error");
+    const errorMessages = result.error.issues
+      .map((issue) => `${issue.path.join(".")}: ${issue.message}`)
+      .join(", ");
+    throw new Error(`バリデーションエラー: ${errorMessages}`);
   }
 
   const { groupId, userTo, amount, method, description } = result.data;
