@@ -3,6 +3,7 @@
 
 import { useState } from "react";
 import { cancelSettlement } from "@/app/dashboard/groups/[id]/actions";
+import { PAYMENT_METHODS } from "@/lib/constants/payment-methods";
 import Image from "next/image";
 
 interface SettlementListProps {
@@ -52,13 +53,8 @@ export default function SettlementList({
   };
 
   const getMethodLabel = (method: string) => {
-    const labels: Record<string, string> = {
-      cash: "💵 現金",
-      bank_transfer: "🏦 銀行振込",
-      paypay: "💰 PayPay",
-      line_pay: "💳 LINE Pay",
-    };
-    return labels[method] || method;
+    const entry = PAYMENT_METHODS.find((item) => item.value === method);
+    return entry ? `${entry.icon} ${entry.label}` : method;
   };
 
   if (settlements.length === 0) {

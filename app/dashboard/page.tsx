@@ -34,7 +34,7 @@ export default async function DashboardPage() {
         </div>
 
         {/* メイン機能カード */}
-        <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           {/* グループ管理 */}
           <Link href="/dashboard/groups">
             <div className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition cursor-pointer h-full">
@@ -44,6 +44,18 @@ export default async function DashboardPage() {
               </div>
               <p className="text-gray-600 text-sm">
                 グループの作成・編集・削除
+              </p>
+            </div>
+          </Link>
+          {/* マイページ */}
+          <Link href="/dashboard/profile">
+            <div className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition cursor-pointer h-full">
+              <div className="flex items-center gap-3 mb-2">
+                <span className="text-3xl">🙋‍♂️</span>
+                <h2 className="text-xl font-semibold">マイページ</h2>
+              </div>
+              <p className="text-gray-600 text-sm">
+                プロフィールや決済方法の設定ができます
               </p>
             </div>
           </Link>
