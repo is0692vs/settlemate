@@ -2,9 +2,9 @@ import { z } from "zod";
 
 export const paymentMethodEnum = z.enum([
   "cash",
-  "bank_transfer",
+  "bank",
   "paypay",
-  "line_pay",
+  "linepay",
 ]);
 
 export const createSettlementSchema = z.object({

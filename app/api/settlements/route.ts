@@ -2,7 +2,6 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { createSettlementSchema } from "@/lib/validations/settlement";
 import { NextResponse } from "next/server";
-import { z } from "zod";
 
 export async function POST(request: Request) {
   try {
@@ -121,13 +120,6 @@ export async function POST(request: Request) {
       { status: 201 }
     );
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { error: "Validation error", details: error.flatten() },
-        { status: 400 }
-      );
-    }
-
     console.error("Settlement creation error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
