@@ -217,7 +217,7 @@ export function ManualExpenseForm({
         )}
       </div>
 
-      <div className="bg-gray-200 p-3 rounded">
+      <div className="bg-gray-50 border border-gray-200 p-3 rounded">
         <p className="text-sm">
           債務合計: ¥{totalDebt.toLocaleString()} / 総額: ¥
           {totalAmount.toLocaleString()}
