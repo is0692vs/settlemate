@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -18,6 +19,7 @@ export default function GroupForm({
   onSubmit,
   submitLabel,
 }: Props) {
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const {
     register,
     handleSubmit,
@@ -27,8 +29,22 @@ export default function GroupForm({
     defaultValues,
   });
 
+  const onValidSubmit = handleSubmit(async (formData) => {
+    setSubmitError(null);
+    try {
+      await onSubmit(formData as CreateGroupInput);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "送信に失敗しました";
+      setSubmitError(message);
+      console.error(err);
+    }
+  });
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <form onSubmit={onValidSubmit} className="space-y-4">
+      {submitError && (
+        <div className="bg-red-50 text-red-600 p-3 rounded">{submitError}</div>
+      )}
       <div>
         <label className="block text-sm font-medium mb-1">
           グループ名 <span className="text-red-500">*</span>

@@ -1,38 +1,56 @@
-"use client";
-
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
+import { auth } from "@/auth";
+import { prisma } from "@/lib/prisma";
 import GroupForm from "@/components/groups/GroupForm";
-import { createGroup } from "@/lib/api/groups";
 import type { CreateGroupInput } from "@/lib/validations/group";
 
-export default function NewGroupPage() {
-  const router = useRouter();
-  const [error, setError] = useState<string | null>(null);
+async function createGroupAction(data: CreateGroupInput) {
+  "use server";
 
-  const handleSubmit = async (data: CreateGroupInput) => {
-    try {
-      setError(null);
-      await createGroup(data);
-      router.push("/dashboard/groups");
-    } catch (err: Error | unknown) {
-      const message = err instanceof Error ? err.message : "作成に失敗しました";
-      setError(message);
-      console.error(err);
-    }
-  };
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    throw new Error("認証が必要です");
+  }
+
+  const userId = session.user.id;
+
+  await prisma.$transaction(async (tx) => {
+    const newGroup = await tx.group.create({
+      data: {
+        name: data.name,
+        icon: data.icon || null,
+        createdBy: userId,
+      },
+    });
+
+    await tx.groupMember.create({
+      data: {
+        groupId: newGroup.id,
+        userId,
+      },
+    });
+  });
+
+  revalidatePath("/dashboard/groups");
+  redirect("/dashboard/groups");
+}
+
+export default async function NewGroupPage() {
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    redirect("/auth/signin");
+  }
 
   return (
     <div className="min-h-screen p-8">
       <div className="mx-auto max-w-md">
         <h1 className="text-2xl font-bold mb-6">新規グループ作成</h1>
 
-        {error && (
-          <div className="bg-red-50 text-red-600 p-3 rounded mb-4">{error}</div>
-        )}
-
         <div className="bg-white rounded-lg shadow p-6">
-          <GroupForm onSubmit={handleSubmit} submitLabel="作成" />
+          <GroupForm onSubmit={createGroupAction} submitLabel="作成" />
         </div>
       </div>
     </div>

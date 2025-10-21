@@ -1,87 +1,99 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
+import { auth } from "@/auth";
+import { prisma } from "@/lib/prisma";
 import GroupForm from "@/components/groups/GroupForm";
-import { getGroup, updateGroup } from "@/lib/api/groups";
-import type { GroupDetail } from "@/lib/api/groups";
-import type { UpdateGroupInput } from "@/lib/validations/group";
+import type { CreateGroupInput } from "@/lib/validations/group";
 
-export default function EditGroupPage({ params }: { params: { id: string } }) {
-  const router = useRouter();
-  const [group, setGroup] = useState<GroupDetail | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+async function updateGroupAction(groupId: string, data: CreateGroupInput) {
+  "use server";
 
-  useEffect(() => {
-    const fetchGroup = async () => {
-      try {
-        setError(null);
-        const data = await getGroup(params.id);
-        setGroup(data);
-      } catch (err: Error | unknown) {
-        const message =
-          err instanceof Error
-            ? err.message
-            : "グループの読み込みに失敗しました";
-        setError(message);
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const session = await auth();
 
-    fetchGroup();
-  }, [params.id]);
-
-  const handleSubmit = async (data: UpdateGroupInput) => {
-    try {
-      setError(null);
-      await updateGroup(params.id, data);
-      router.push(`/dashboard/groups/${params.id}`);
-    } catch (err: Error | unknown) {
-      const message = err instanceof Error ? err.message : "更新に失敗しました";
-      setError(message);
-      console.error(err);
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen p-8">
-        <div className="mx-auto max-w-md">
-          <p className="text-gray-500">読み込み中...</p>
-        </div>
-      </div>
-    );
+  if (!session?.user?.id) {
+    throw new Error("認証が必要です");
   }
+
+  const userId = session.user.id;
+
+  const membership = await prisma.groupMember.findUnique({
+    where: {
+      groupId_userId: {
+        groupId,
+        userId,
+      },
+    },
+    select: { id: true },
+  });
+
+  if (!membership) {
+    throw new Error("グループへのアクセス権限がありません");
+  }
+
+  await prisma.group.update({
+    where: { id: groupId },
+    data: {
+      name: data.name,
+      icon: data.icon || null,
+    },
+  });
+
+  revalidatePath(`/dashboard/groups/${groupId}`);
+  revalidatePath("/dashboard/groups");
+  redirect(`/dashboard/groups/${groupId}`);
+}
+
+export default async function EditGroupPage({
+  params,
+}: {
+  params: { id: string };
+}) {
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    redirect("/auth/signin");
+  }
+
+  const group = await prisma.group.findFirst({
+    where: {
+      id: params.id,
+      members: {
+        some: {
+          userId: session.user.id,
+        },
+      },
+    },
+    select: {
+      id: true,
+      name: true,
+      icon: true,
+    },
+  });
 
   if (!group) {
     return (
       <div className="min-h-screen p-8">
         <div className="mx-auto max-w-md">
-          <p className="text-red-600">{error || "グループが見つかりません"}</p>
+          <p className="text-red-600">グループが見つかりません</p>
         </div>
       </div>
     );
   }
+
+  const updateAction = updateGroupAction.bind(null, group.id);
 
   return (
     <div className="min-h-screen p-8">
       <div className="mx-auto max-w-md">
         <h1 className="text-2xl font-bold mb-6">グループ編集</h1>
 
-        {error && (
-          <div className="bg-red-50 text-red-600 p-3 rounded mb-4">{error}</div>
-        )}
-
         <div className="bg-white rounded-lg shadow p-6">
           <GroupForm
             defaultValues={{
               name: group.name,
-              icon: group.icon || "",
+              icon: group.icon ?? "",
             }}
-            onSubmit={handleSubmit}
+            onSubmit={updateAction}
             submitLabel="更新"
           />
         </div>

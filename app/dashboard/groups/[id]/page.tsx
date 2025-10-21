@@ -1,84 +1,103 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { getGroup, deleteGroup } from "@/lib/api/groups";
-import type { GroupDetail } from "@/lib/api/groups";
+import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
+import { auth } from "@/auth";
+import { prisma } from "@/lib/prisma";
+import DeleteGroupButton from "@/components/groups/DeleteGroupButton";
 
-export default function GroupDetailPage({
+async function deleteGroupAction(groupId: string) {
+  "use server";
+
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    throw new Error("認証が必要です");
+  }
+
+  const userId = session.user.id;
+
+  const membership = await prisma.groupMember.findUnique({
+    where: {
+      groupId_userId: {
+        groupId,
+        userId,
+      },
+    },
+    select: { id: true },
+  });
+
+  if (!membership) {
+    throw new Error("グループへのアクセス権限がありません");
+  }
+
+  await prisma.group.delete({
+    where: { id: groupId },
+  });
+
+  revalidatePath("/dashboard/groups");
+  redirect("/dashboard/groups");
+}
+
+export default async function GroupDetailPage({
   params,
 }: {
   params: { id: string };
 }) {
-  const router = useRouter();
-  const [group, setGroup] = useState<GroupDetail | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const session = await auth();
 
-  useEffect(() => {
-    const fetchGroup = async () => {
-      try {
-        setError(null);
-        const data = await getGroup(params.id);
-        setGroup(data);
-      } catch (err: Error | unknown) {
-        const message =
-          err instanceof Error
-            ? err.message
-            : "グループの読み込みに失敗しました";
-        setError(message);
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchGroup();
-  }, [params.id]);
-
-  const handleDelete = async () => {
-    if (!confirm("本当に削除しますか？")) return;
-
-    try {
-      await deleteGroup(params.id);
-      router.push("/dashboard/groups");
-    } catch (err: Error | unknown) {
-      const message = err instanceof Error ? err.message : "削除に失敗しました";
-      alert(message);
-      console.error(err);
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen p-8">
-        <div className="mx-auto max-w-4xl">
-          <p className="text-gray-500">読み込み中...</p>
-        </div>
-      </div>
-    );
+  if (!session?.user?.id) {
+    redirect("/auth/signin");
   }
 
-  if (error || !group) {
+  const group = await prisma.group.findFirst({
+    where: {
+      id: params.id,
+      members: {
+        some: {
+          userId: session.user.id,
+        },
+      },
+    },
+    include: {
+      members: {
+        include: {
+          user: true,
+        },
+        orderBy: {
+          joinedAt: "asc",
+        },
+      },
+    },
+  });
+
+  if (!group) {
     return (
       <div className="min-h-screen p-8">
         <div className="mx-auto max-w-4xl">
-          <p className="text-red-600">{error || "グループが見つかりません"}</p>
-          <Link href="/dashboard/groups">
-            <button className="mt-4 bg-blue-600 text-white px-4 py-2 rounded">
-              グループ一覧に戻る
-            </button>
+          <p className="text-red-600">グループが見つかりません</p>
+          <Link
+            href="/dashboard/groups"
+            className="mt-4 inline-block text-blue-600 hover:underline"
+          >
+            グループ一覧に戻る
           </Link>
         </div>
       </div>
     );
   }
 
+  const members = group.members.map((member) => ({
+    userId: member.userId,
+    name: member.user?.name ?? "名前未設定",
+    email: member.user?.email ?? "メール未設定",
+    joinedAt: member.joinedAt.toISOString(),
+  }));
+
+  const deleteAction = deleteGroupAction.bind(null, group.id);
+
   return (
     <div className="min-h-screen p-8">
       <div className="mx-auto max-w-4xl">
-        {/* ヘッダー */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
             {group.icon && <span className="text-5xl">{group.icon}</span>}
@@ -90,25 +109,19 @@ export default function GroupDetailPage({
                 編集
               </button>
             </Link>
-            <button
-              onClick={handleDelete}
-              className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
-            >
-              削除
-            </button>
+            <DeleteGroupButton onDelete={deleteAction} />
           </div>
         </div>
 
-        {/* メンバー一覧 */}
         <div className="bg-white rounded-lg shadow p-6">
           <h2 className="text-xl font-semibold mb-4">
-            メンバー ({group.members.length})
+            メンバー ({members.length})
           </h2>
-          {group.members.length === 0 ? (
+          {members.length === 0 ? (
             <p className="text-gray-500">メンバーがいません</p>
           ) : (
             <ul className="space-y-2">
-              {group.members.map((member) => (
+              {members.map((member) => (
                 <li
                   key={member.userId}
                   className="flex items-center gap-3 p-3 border-b last:border-b-0"
