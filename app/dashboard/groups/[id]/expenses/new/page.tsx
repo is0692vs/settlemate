@@ -5,6 +5,7 @@ import { ExpenseForm } from "@/components/expenses/ExpenseForm";
 import { ManualExpenseForm } from "@/components/expenses/ManualExpenseForm";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Link from "next/link";
+import type { GroupMember, User } from "@prisma/client";
 
 export default async function NewExpensePage({
   params,
@@ -31,7 +32,9 @@ export default async function NewExpensePage({
   if (!group) notFound();
 
   // メンバーシップ検証
-  const isMember = group.members.some((m) => m.userId === session.user?.id);
+  const isMember = group.members.some(
+    (m: GroupMember & { user: User | null }) => m.userId === session.user?.id
+  );
   if (!isMember) {
     return (
       <div className="min-h-screen p-8">
@@ -50,7 +53,9 @@ export default async function NewExpensePage({
     );
   }
 
-  const members = group.members.map((m) => m.user);
+  const members = group.members
+    .map((m: GroupMember & { user: User | null }) => m.user)
+    .filter((user): user is User => user !== null);
 
   return (
     <div className="min-h-screen p-8">

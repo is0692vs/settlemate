@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import GroupCard from "@/components/groups/GroupCard";
+import type { Group } from "@prisma/client";
 
 export default async function GroupsPage() {
   const session = await auth();
@@ -35,13 +36,15 @@ export default async function GroupsPage() {
     },
   });
 
-  const formattedGroups = groups.map((group) => ({
-    id: group.id,
-    name: group.name,
-    icon: group.icon,
-    createdAt: group.createdAt.toISOString(),
-    memberCount: group._count.members,
-  }));
+  const formattedGroups = groups.map(
+    (group: Group & { _count: { members: number } }) => ({
+      id: group.id,
+      name: group.name,
+      icon: group.icon,
+      createdAt: group.createdAt.toISOString(),
+      memberCount: group._count.members,
+    })
+  );
 
   return (
     <div className="min-h-screen p-8">
@@ -74,9 +77,17 @@ export default async function GroupsPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {formattedGroups.map((group) => (
-              <GroupCard key={group.id} group={group} />
-            ))}
+            {formattedGroups.map(
+              (group: {
+                id: string;
+                name: string;
+                icon: string | null;
+                createdAt: string;
+                memberCount: number;
+              }) => (
+                <GroupCard key={group.id} group={group} />
+              )
+            )}
           </div>
         )}
       </div>

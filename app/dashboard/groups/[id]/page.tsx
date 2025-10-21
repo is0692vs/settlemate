@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import DeleteGroupButton from "@/components/groups/DeleteGroupButton";
 import { InviteLink } from "@/components/groups/InviteLink";
 import { ExpenseList } from "@/components/expenses/ExpenseList";
+import type { GroupMember, User } from "@prisma/client";
 
 async function deleteGroupAction(groupId: string) {
   "use server";
@@ -96,12 +97,14 @@ export default async function GroupDetailPage({
     );
   }
 
-  const members = group.members.map((member) => ({
-    userId: member.userId,
-    name: member.user?.name ?? "名前未設定",
-    email: member.user?.email ?? "メール未設定",
-    joinedAt: member.joinedAt.toISOString(),
-  }));
+  const members = group.members.map(
+    (member: GroupMember & { user: User | null }) => ({
+      userId: member.userId,
+      name: member.user?.name ?? "名前未設定",
+      email: member.user?.email ?? "メール未設定",
+      joinedAt: member.joinedAt.toISOString(),
+    })
+  );
 
   const deleteAction = deleteGroupAction.bind(null, group.id);
 
@@ -150,17 +153,24 @@ export default async function GroupDetailPage({
             <p className="text-gray-700">メンバーがいません</p>
           ) : (
             <ul className="space-y-2">
-              {members.map((member) => (
-                <li
-                  key={member.userId}
-                  className="flex items-center gap-3 p-3 border-b last:border-b-0"
-                >
-                  <div>
-                    <p className="font-medium">{member.name}</p>
-                    <p className="text-sm text-gray-700">{member.email}</p>
-                  </div>
-                </li>
-              ))}
+              {members.map(
+                (member: {
+                  userId: string;
+                  name: string;
+                  email: string;
+                  joinedAt: string;
+                }) => (
+                  <li
+                    key={member.userId}
+                    className="flex items-center gap-3 p-3 border-b last:border-b-0"
+                  >
+                    <div>
+                      <p className="font-medium">{member.name}</p>
+                      <p className="text-sm text-gray-700">{member.email}</p>
+                    </div>
+                  </li>
+                )
+              )}
             </ul>
           )}
         </div>

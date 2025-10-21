@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { createExpenseSchema } from "@/lib/validations/expense";
+import type { Prisma } from "@prisma/client";
 import {
   calculateEqualSplit,
   calculateManualSplit,
@@ -49,34 +50,36 @@ export async function POST(req: NextRequest) {
     }
 
     // トランザクション処理
-    const expense = await prisma.$transaction(async (tx) => {
-      // 1. Expense作成
-      const newExpense = await tx.expense.create({
-        data: {
-          groupId: validated.groupId,
-          paidBy: validated.paidBy,
-          amount: validated.amount,
-          description: validated.description,
-          participants: validated.participants, // 金額付き配列を保存
-          splitType: validated.splitType,
-        },
-      });
+    const expense = await prisma.$transaction(
+      async (tx: Prisma.TransactionClient) => {
+        // 1. Expense作成
+        const newExpense = await tx.expense.create({
+          data: {
+            groupId: validated.groupId,
+            paidBy: validated.paidBy,
+            amount: validated.amount,
+            description: validated.description,
+            participants: validated.participants, // 金額付き配列を保存
+            splitType: validated.splitType,
+          },
+        });
 
-      // 2. 残高計算
-      const balances =
-        validated.splitType === "equal"
-          ? calculateEqualSplit(
-              validated.amount,
-              validated.paidBy,
-              participantIds
-            )
-          : calculateManualSplit(validated.paidBy, validated.participants);
+        // 2. 残高計算
+        const balances =
+          validated.splitType === "equal"
+            ? calculateEqualSplit(
+                validated.amount,
+                validated.paidBy,
+                participantIds
+              )
+            : calculateManualSplit(validated.paidBy, validated.participants);
 
-      // 3. Balance更新
-      await updateBalances(tx, validated.groupId, balances);
+        // 3. Balance更新
+        await updateBalances(tx, validated.groupId, balances);
 
-      return newExpense;
-    });
+        return newExpense;
+      }
+    );
 
     return NextResponse.json(expense, { status: 201 });
   } catch (error: unknown) {

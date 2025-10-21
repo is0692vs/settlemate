@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { createGroupSchema } from "@/lib/validations/group";
 import { generateInviteCode } from "@/lib/utils/invite-code";
 import { NextResponse } from "next/server";
+import type { Prisma } from "@prisma/client";
 
 /**
  * POST /api/groups
@@ -30,42 +31,44 @@ export async function POST(request: Request) {
     const userId = session.user.id;
 
     // トランザクションでグループ作成とメンバー追加を実行
-    const group = await prisma.$transaction(async (tx) => {
-      // 一意な招待コードを生成
-      let inviteCode = generateInviteCode();
-      let isUnique = false;
+    const group = await prisma.$transaction(
+      async (tx: Prisma.TransactionClient) => {
+        // 一意な招待コードを生成
+        let inviteCode = generateInviteCode();
+        let isUnique = false;
 
-      while (!isUnique) {
-        const existing = await tx.group.findUnique({
-          where: { inviteCode },
+        while (!isUnique) {
+          const existing = await tx.group.findUnique({
+            where: { inviteCode },
+          });
+
+          if (!existing) {
+            isUnique = true;
+          } else {
+            inviteCode = generateInviteCode();
+          }
+        }
+
+        const createdGroup = await tx.group.create({
+          data: {
+            name,
+            icon: icon || null,
+            createdBy: userId,
+            inviteCode,
+          },
         });
 
-        if (!existing) {
-          isUnique = true;
-        } else {
-          inviteCode = generateInviteCode();
-        }
+        // 作成者を自動的にメンバーとして追加
+        await tx.groupMember.create({
+          data: {
+            groupId: createdGroup.id,
+            userId: userId,
+          },
+        });
+
+        return createdGroup;
       }
-
-      const createdGroup = await tx.group.create({
-        data: {
-          name,
-          icon: icon || null,
-          createdBy: userId,
-          inviteCode,
-        },
-      });
-
-      // 作成者を自動的にメンバーとして追加
-      await tx.groupMember.create({
-        data: {
-          groupId: createdGroup.id,
-          userId: userId,
-        },
-      });
-
-      return createdGroup;
-    });
+    );
 
     return NextResponse.json(
       {
