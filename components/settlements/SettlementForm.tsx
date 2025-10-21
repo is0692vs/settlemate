@@ -52,22 +52,41 @@ export default function SettlementForm({
   });
 
   const selectedUserTo = form.watch("userTo");
+  const selectedAmount = form.watch("amount") as number;
   const maxAmount =
     balances.find((b) => b.userTo === selectedUserTo)?.amount || 0;
 
   const validateAmount = (amount: unknown) => {
     const numAmount = Number(amount);
     if (isNaN(numAmount)) return "有効な数値を入力してください";
+    if (numAmount <= 0) return "金額は1円以上である必要があります";
     if (numAmount > maxAmount) {
       return `金額は残高（¥${maxAmount.toLocaleString()}）以下である必要があります`;
     }
     return true;
   };
 
+  // フロント側でのバリデーション：送信ボタンの有効性を判定
+  const isFormValid =
+    selectedUserTo &&
+    selectedAmount > 0 &&
+    selectedAmount <= maxAmount &&
+    !form.formState.errors.userTo &&
+    !form.formState.errors.amount &&
+    !form.formState.errors.method;
+
   const onSubmit = async (data: SettlementFormData) => {
     try {
       setIsSubmitting(true);
       setError(null);
+
+      // クライアント側での最終チェック
+      if (!selectedUserTo || selectedAmount <= 0 || selectedAmount > maxAmount) {
+        setError("入力内容を確認してください");
+        setIsSubmitting(false);
+        return;
+      }
+
       await createSettlement({
         groupId,
         ...data,
@@ -189,7 +208,7 @@ export default function SettlementForm({
 
       <button
         type="submit"
-        disabled={isSubmitting}
+        disabled={isSubmitting || !isFormValid}
         className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:bg-gray-400"
       >
         {isSubmitting ? "送信中..." : "返済を記録"}
