@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import type { Node, Edge } from '@xyflow/react';
-import type { UserNodeData, DebtEdgeData } from '@/lib/utils/graph';
-import BalanceGraph from './BalanceGraph';
-import BalanceList, { type BalanceWithUser } from './BalanceList';
-import BalanceViewToggle from './BalanceViewToggle';
+import { useState } from "react";
+import type { Node, Edge } from "@xyflow/react";
+import type { UserNodeData, DebtEdgeData } from "@/lib/utils/graph";
+import BalanceGraph from "./BalanceGraph";
+import BalanceList, { type BalanceWithUser } from "./BalanceList";
+import BalanceViewToggle from "./BalanceViewToggle";
 
 interface BalanceViewerProps {
   nodes: Node<UserNodeData>[];
@@ -20,7 +20,7 @@ export default function BalanceViewer({
   balances,
   currentUserId,
 }: BalanceViewerProps) {
-  const [view, setView] = useState<'graph' | 'list'>('graph');
+  const [view, setView] = useState<"graph" | "list">("graph");
 
   return (
     <div className="space-y-4">
@@ -30,7 +30,7 @@ export default function BalanceViewer({
       </div>
 
       {/* 条件付きレンダリング */}
-      {view === 'graph' ? (
+      {view === "graph" ? (
         <BalanceGraph nodes={nodes} edges={edges} />
       ) : (
         <BalanceList balances={balances} currentUserId={currentUserId} />

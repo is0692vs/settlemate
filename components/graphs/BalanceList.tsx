@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import Image from 'next/image';
+import Image from "next/image";
 
 export type BalanceWithUser = {
   userFrom: string;
@@ -65,7 +65,7 @@ export default function BalanceList({
           <div className="space-y-2">
             {toPay.map((balance) => {
               const user = balance.toUser;
-              const userName = user?.name ?? '名前未設定';
+              const userName = user?.name ?? "名前未設定";
               const userImage = user?.image;
               const initial = userName.charAt(0).toUpperCase();
 
@@ -119,7 +119,7 @@ export default function BalanceList({
           <div className="space-y-2">
             {toReceive.map((balance) => {
               const user = balance.fromUser;
-              const userName = user?.name ?? '名前未設定';
+              const userName = user?.name ?? "名前未設定";
               const userImage = user?.image;
               const initial = userName.charAt(0).toUpperCase();
 
@@ -174,18 +174,18 @@ export default function BalanceList({
             <span
               className={`text-xl font-bold ${
                 difference > 0
-                  ? 'text-red-600'
+                  ? "text-red-600"
                   : difference < 0
-                    ? 'text-green-600'
-                    : 'text-gray-600'
+                  ? "text-green-600"
+                  : "text-gray-600"
               }`}
             >
-              {difference > 0 ? '-' : difference < 0 ? '+' : ''}¥
+              {difference > 0 ? "-" : difference < 0 ? "+" : ""}¥
               {Math.abs(difference).toLocaleString()}
             </span>
             {difference !== 0 && (
               <p className="text-xs text-gray-500 mt-1">
-                {difference > 0 ? '払う方が多い' : '貰う方が多い'}
+                {difference > 0 ? "払う方が多い" : "貰う方が多い"}
               </p>
             )}
           </div>
