@@ -12,9 +12,29 @@ type Props = {
 export function GroupBalanceAccordion({ groupBalances }: Props) {
   const [isOpen, setIsOpen] = useState(false);
 
-  if (groupBalances.length <= 1) {
-    // Accordion not needed if only 1 group
+  if (groupBalances.length === 0) {
     return null;
+  }
+
+  // If only 1 group, show directly without accordion
+  if (groupBalances.length === 1) {
+    const gb = groupBalances[0];
+    return (
+      <div className="mt-2 ml-4">
+        <div className="flex items-center justify-between text-sm">
+          <div className="flex items-center gap-2">
+            {gb.groupIcon && <span>{gb.groupIcon}</span>}
+            <Link
+              href={`/dashboard/groups/${gb.groupId}`}
+              className="text-blue-600 hover:text-blue-800 hover:underline cursor-pointer transition-colors"
+            >
+              {gb.groupName}
+            </Link>
+          </div>
+          <span className="font-medium">¥{gb.amount.toLocaleString()}</span>
+        </div>
+      </div>
+    );
   }
 
   return (
