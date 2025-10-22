@@ -52,7 +52,8 @@ export function ExpenseCard({ expense }: ExpenseCardProps) {
         <div>
           <h3 className="font-semibold">{expense.description || "説明なし"}</h3>
           <p className="text-sm text-gray-600">
-            {getDisplayName(expense.payer)}が¥{expense.amount.toLocaleString()}を支払い
+            {getDisplayName(expense.payer)}が¥{expense.amount.toLocaleString()}
+            を支払い
           </p>
           <p className="text-xs text-gray-500 mt-1">
             {new Date(expense.date).toLocaleDateString("ja-JP")}
