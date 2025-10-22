@@ -56,7 +56,7 @@ async function updatePaymentMethods(formData: FormData) {
   const session = await auth();
 
   if (!session?.user?.id) {
-    throw new Error("認証が必要です");
+    throw new Error("Authentication required");
   }
 
   const selectedMethods = formData

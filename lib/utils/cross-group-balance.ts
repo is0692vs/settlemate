@@ -40,15 +40,15 @@ export type AggregatedBalance = {
   userName: string;
   userImage: string | null;
   totalAmount: number;
-  direction: "pay" | "receive"; // 払う or 貰う
+  direction: "pay" | "receive"; // pay or receive
   groupBalances: GroupBalance[];
 };
 
 /**
- * 全グループの残高をユーザーごとに集計
- * @param balances 全グループの残高データ（fromUser/toUserリレーション含む）
- * @param currentUserId 現在のユーザーID
- * @returns 集計された残高データ（払う/貰う別）
+ * Aggregate balances across all groups by user
+ * @param balances Balance data for all groups (including fromUser/toUser relations)
+ * @param currentUserId Current user ID
+ * @returns Aggregated balance data (separated by pay/receive)
  */
 export function aggregateBalancesByUser(
   balances: BalanceWithDetails[],

@@ -17,7 +17,7 @@ export function AggregatedBalanceList({ toPay, toReceive }: Props) {
 
   return (
     <div className="space-y-6">
-      {/* サマリ */}
+      {/* Summary */}
       <div className="bg-white rounded-lg border p-4 space-y-2 shadow-sm">
         <div className="flex justify-between text-sm">
           <span className="text-gray-600">払う合計</span>
@@ -47,7 +47,7 @@ export function AggregatedBalanceList({ toPay, toReceive }: Props) {
         </div>
       </div>
 
-      {/* 払う一覧 */}
+      {/* To Pay List */}
       {toPay.length > 0 && (
         <div>
           <h3 className="text-lg font-semibold mb-3 text-red-600">
@@ -95,7 +95,7 @@ export function AggregatedBalanceList({ toPay, toReceive }: Props) {
         </div>
       )}
 
-      {/* 貰う一覧 */}
+      {/* To Receive List */}
       {toReceive.length > 0 && (
         <div>
           <h3 className="text-lg font-semibold mb-3 text-green-600">
@@ -143,7 +143,7 @@ export function AggregatedBalanceList({ toPay, toReceive }: Props) {
         </div>
       )}
 
-      {/* 空状態 */}
+      {/* Empty State */}
       {toPay.length === 0 && toReceive.length === 0 && (
         <div className="text-center py-12 text-gray-500 bg-white rounded-lg border">
           すべてのグループで残高がありません
