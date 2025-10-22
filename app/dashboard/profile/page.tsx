@@ -101,7 +101,7 @@ export default async function ProfilePage() {
 
   const acceptedMethods = normalizeAcceptedMethods(user.acceptedPaymentMethods);
 
-  // 全グループの残高を取得
+  // Get balances for all groups
   const balances = await prisma.balance.findMany({
     where: {
       OR: [{ userFrom: session.user.id }, { userTo: session.user.id }],
