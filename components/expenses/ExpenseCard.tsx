@@ -31,17 +31,19 @@ export function ExpenseCard({
     : [];
 
   // 参加者のUserオブジェクトを取得 (支払者も含む)
+  // Create a lookup map for members by user ID for O(1) access
+  const memberMap = new Map<string, User>(members.map((m) => [m.id, m]));
   const participantUsers: User[] = [];
   for (const p of participants) {
     if (!p || typeof p !== "object") continue;
     const userId = (p as { userId: string }).userId;
     if (!userId) continue;
-    const user = members.find((m) => m.id === userId);
+    const user = memberMap.get(userId);
     if (user) participantUsers.push(user);
   }
   // 支払者を参加者リストに追加(重複除外)
   if (!participantUsers.find((u) => u.id === expense.paidBy)) {
-    const payer = members.find((m) => m.id === expense.paidBy);
+    const payer = memberMap.get(expense.paidBy);
     if (payer) participantUsers.push(payer);
   }
 
