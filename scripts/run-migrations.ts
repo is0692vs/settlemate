@@ -1,10 +1,10 @@
 #!/usr/bin/env tsx
 /**
  * Migration runner script
- * 
+ *
  * Usage:
  *   pnpm tsx scripts/run-migrations.ts
- * 
+ *
  * This script should be run in production environments AFTER deployment
  * to apply pending database migrations.
  */

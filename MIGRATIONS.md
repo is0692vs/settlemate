@@ -50,6 +50,7 @@ A Node.js script is available for running migrations:
 **Location**: `scripts/run-migrations.ts`
 
 **Usage**:
+
 ```bash
 # Ensure DATABASE_URL is set
 export DATABASE_URL="postgresql://..."
@@ -82,6 +83,7 @@ pnpm prisma migrate resolve --rolled-back <migration_name>
 ## Migration Files
 
 Migrations are stored in `prisma/migrations/` directory:
+
 - Each migration has a timestamp prefix
 - SQL file contains the actual database changes
 - `migration_lock.toml` tracks migration state
@@ -99,6 +101,7 @@ DATABASE_URL="your_connection_string" pnpm prisma migrate deploy
 ### Connection Issues
 
 Verify your `DATABASE_URL`:
+
 - Format: `postgresql://user:password@host:port/database`
 - Ensure database server is running
 - Check firewall rules if remote connection
