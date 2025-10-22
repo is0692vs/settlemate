@@ -2,7 +2,7 @@
 
 import { netBalances } from "./balance";
 
-// BalanceWithDetailsの型定義
+// Type definition for BalanceWithDetails
 export type BalanceWithDetails = {
   id: string;
   groupId: string;
