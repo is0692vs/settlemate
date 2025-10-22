@@ -76,15 +76,16 @@ export function aggregateBalancesByUser(
     nettedBalances.push(...netted);
   }
 
-  // Group by user
-  const userMap = new Map<string, AggregatedBalance>();
+  // Group by user - separate toPay and toReceive
+  const toPayMap = new Map<string, AggregatedBalance>();
+  const toReceiveMap = new Map<string, AggregatedBalance>();
 
   for (const balance of nettedBalances) {
     // When the current user pays
     if (balance.userFrom === currentUserId) {
       const userId = balance.userTo;
-      if (!userMap.has(userId)) {
-        userMap.set(userId, {
+      if (!toPayMap.has(userId)) {
+        toPayMap.set(userId, {
           userId,
           userName: getDisplayName(balance.toUser),
           userImage: balance.toUser.image,
@@ -93,7 +94,7 @@ export function aggregateBalancesByUser(
           groupBalances: [],
         });
       }
-      const user = userMap.get(userId)!;
+      const user = toPayMap.get(userId)!;
       user.totalAmount += balance.amount;
       user.groupBalances.push({
         groupId: balance.groupId,
@@ -105,8 +106,8 @@ export function aggregateBalancesByUser(
     // When the current user receives
     else if (balance.userTo === currentUserId) {
       const userId = balance.userFrom;
-      if (!userMap.has(userId)) {
-        userMap.set(userId, {
+      if (!toReceiveMap.has(userId)) {
+        toReceiveMap.set(userId, {
           userId,
           userName: getDisplayName(balance.fromUser),
           userImage: balance.fromUser.image,
@@ -115,7 +116,7 @@ export function aggregateBalancesByUser(
           groupBalances: [],
         });
       }
-      const user = userMap.get(userId)!;
+      const user = toReceiveMap.get(userId)!;
       user.totalAmount += balance.amount;
       user.groupBalances.push({
         groupId: balance.groupId,
@@ -126,21 +127,13 @@ export function aggregateBalancesByUser(
     }
   }
 
-  // Separate by pay/receive and sort by largest amount
-  const toPay: AggregatedBalance[] = [];
-  const toReceive: AggregatedBalance[] = [];
-
-  for (const balance of userMap.values()) {
-    if (balance.direction === "pay") {
-      toPay.push(balance);
-    } else {
-      toReceive.push(balance);
-    }
-  }
-
-  // Sort in descending order by amount
-  toPay.sort((a, b) => b.totalAmount - a.totalAmount);
-  toReceive.sort((a, b) => b.totalAmount - a.totalAmount);
+  // Convert maps to arrays and sort by largest amount
+  const toPay = Array.from(toPayMap.values()).sort(
+    (a, b) => b.totalAmount - a.totalAmount
+  );
+  const toReceive = Array.from(toReceiveMap.values()).sort(
+    (a, b) => b.totalAmount - a.totalAmount
+  );
 
   return { toPay, toReceive };
 }
