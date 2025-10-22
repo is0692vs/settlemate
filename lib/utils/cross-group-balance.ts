@@ -57,7 +57,7 @@ export function aggregateBalancesByUser(
   toPay: AggregatedBalance[];
   toReceive: AggregatedBalance[];
 } {
-  // まず相殺処理を適用
+  // First apply netting process
   const netted = netBalances(balances);
 
   // Group by user
