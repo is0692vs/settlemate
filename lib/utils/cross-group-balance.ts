@@ -64,7 +64,7 @@ export function aggregateBalancesByUser(
   const userMap = new Map<string, AggregatedBalance>();
 
   for (const balance of netted) {
-    // 自分が払う場合
+    // When the current user pays
     if (balance.userFrom === currentUserId) {
       const userId = balance.userTo;
       if (!userMap.has(userId)) {
