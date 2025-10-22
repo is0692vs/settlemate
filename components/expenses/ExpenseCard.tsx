@@ -4,6 +4,7 @@
 import type { Expense, User } from "@prisma/client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { getDisplayName } from "@/lib/utils/user";
 
 type ExpenseWithPayer = Expense & {
   payer: User;
@@ -51,7 +52,8 @@ export function ExpenseCard({ expense }: ExpenseCardProps) {
         <div>
           <h3 className="font-semibold">{expense.description || "説明なし"}</h3>
           <p className="text-sm text-gray-600">
-            {expense.payer.name}が¥{expense.amount.toLocaleString()}を支払い
+            {getDisplayName(expense.payer)}が¥{expense.amount.toLocaleString()}
+            を支払い
           </p>
           <p className="text-xs text-gray-500 mt-1">
             {new Date(expense.date).toLocaleDateString("ja-JP")}

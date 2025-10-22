@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { createSettlement } from "@/app/dashboard/groups/[id]/actions";
+import { getDisplayName } from "@/lib/utils/user";
 import {
   DEFAULT_PAYMENT_METHOD_VALUES,
   PAYMENT_METHODS,
@@ -41,6 +42,7 @@ type BalanceWithUser = {
   toUser: {
     id: string;
     name: string | null;
+    displayName?: string | null;
     image: string | null;
     acceptedPaymentMethods?: Prisma.JsonValue | null;
   } | null;
@@ -222,7 +224,7 @@ export default function SettlementForm({
           <option value="">選択してください</option>
           {balances.map((balance) => (
             <option key={balance.userTo} value={balance.userTo}>
-              {balance.toUser?.name || "名前未設定"} - ¥
+              {getDisplayName(balance.toUser)} - ¥
               {balance.amount.toLocaleString()}
             </option>
           ))}

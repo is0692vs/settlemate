@@ -1,6 +1,7 @@
 // lib/utils/cross-group-balance.ts
 
 import { netBalances } from "./balance";
+import { getDisplayName } from "./user";
 
 // Type definition for BalanceWithDetails
 export type BalanceWithDetails = {
@@ -12,11 +13,13 @@ export type BalanceWithDetails = {
   fromUser: {
     id: string;
     name: string | null;
+    displayName?: string | null;
     image: string | null;
   };
   toUser: {
     id: string;
     name: string | null;
+    displayName?: string | null;
     image: string | null;
   };
   group: {
@@ -57,20 +60,33 @@ export function aggregateBalancesByUser(
   toPay: AggregatedBalance[];
   toReceive: AggregatedBalance[];
 } {
-  // First apply netting process
-  const netted = netBalances(balances);
+  // Group balances by group first
+  const balancesByGroup = new Map<string, BalanceWithDetails[]>();
+  for (const balance of balances) {
+    if (!balancesByGroup.has(balance.groupId)) {
+      balancesByGroup.set(balance.groupId, []);
+    }
+    balancesByGroup.get(balance.groupId)!.push(balance);
+  }
+
+  // Apply netting within each group separately
+  const nettedBalances: BalanceWithDetails[] = [];
+  for (const [, groupBalances] of balancesByGroup) {
+    const netted = netBalances(groupBalances);
+    nettedBalances.push(...netted);
+  }
 
   // Group by user
   const userMap = new Map<string, AggregatedBalance>();
 
-  for (const balance of netted) {
+  for (const balance of nettedBalances) {
     // When the current user pays
     if (balance.userFrom === currentUserId) {
       const userId = balance.userTo;
       if (!userMap.has(userId)) {
         userMap.set(userId, {
           userId,
-          userName: balance.toUser.name || "Unknown",
+          userName: getDisplayName(balance.toUser),
           userImage: balance.toUser.image,
           totalAmount: 0,
           direction: "pay",
@@ -92,7 +108,7 @@ export function aggregateBalancesByUser(
       if (!userMap.has(userId)) {
         userMap.set(userId, {
           userId,
-          userName: balance.fromUser.name || "Unknown",
+          userName: getDisplayName(balance.fromUser),
           userImage: balance.fromUser.image,
           totalAmount: 0,
           direction: "receive",
