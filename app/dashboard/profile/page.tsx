@@ -133,6 +133,7 @@ export default async function ProfilePage() {
         select: {
           id: true,
           name: true,
+          displayName: true,
           image: true,
         },
       },
@@ -140,6 +141,7 @@ export default async function ProfilePage() {
         select: {
           id: true,
           name: true,
+          displayName: true,
           image: true,
         },
       },

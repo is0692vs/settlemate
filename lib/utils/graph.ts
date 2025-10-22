@@ -2,6 +2,7 @@
 import dagre from "@dagrejs/dagre";
 import type { Node, Edge } from "@xyflow/react";
 import { netBalances } from "./balance";
+import { getDisplayName } from "./user";
 
 export type Balance = {
   userFrom: string;
@@ -13,6 +14,7 @@ export type Balance = {
 export type User = {
   id: string;
   name: string | null;
+  displayName?: string | null;
   image: string | null;
 };
 
@@ -49,7 +51,7 @@ export function balancesToGraph(
     type: "userNode",
     position: { x: 0, y: 0 }, // Dagreで後から計算
     data: {
-      name: user.name ?? "名前未設定",
+      name: getDisplayName(user),
       image: user.image,
       isMe: user.id === currentUserId,
     },

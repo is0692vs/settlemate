@@ -3,6 +3,7 @@
 
 import Image from "next/image";
 import { netBalances } from "@/lib/utils/balance";
+import { getDisplayName } from "@/lib/utils/user";
 
 export type BalanceWithUser = {
   userFrom: string;
@@ -11,11 +12,13 @@ export type BalanceWithUser = {
   fromUser: {
     id: string;
     name: string | null;
+    displayName?: string | null;
     image: string | null;
   } | null;
   toUser: {
     id: string;
     name: string | null;
+    displayName?: string | null;
     image: string | null;
   } | null;
 };
@@ -70,7 +73,7 @@ export default function BalanceList({
           <div className="space-y-2">
             {toPay.map((balance) => {
               const user = balance.toUser;
-              const userName = user?.name ?? "名前未設定";
+              const userName = getDisplayName(user);
               const userImage = user?.image;
               const initial = userName ? userName.charAt(0).toUpperCase() : "?";
 
@@ -124,7 +127,7 @@ export default function BalanceList({
           <div className="space-y-2">
             {toReceive.map((balance) => {
               const user = balance.fromUser;
-              const userName = user?.name ?? "名前未設定";
+              const userName = getDisplayName(user);
               const userImage = user?.image;
               const initial = userName ? userName.charAt(0).toUpperCase() : "?";
 

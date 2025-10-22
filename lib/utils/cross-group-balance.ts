@@ -1,6 +1,7 @@
 // lib/utils/cross-group-balance.ts
 
 import { netBalances } from "./balance";
+import { getDisplayName } from "./user";
 
 // Type definition for BalanceWithDetails
 export type BalanceWithDetails = {
@@ -12,11 +13,13 @@ export type BalanceWithDetails = {
   fromUser: {
     id: string;
     name: string | null;
+    displayName?: string | null;
     image: string | null;
   };
   toUser: {
     id: string;
     name: string | null;
+    displayName?: string | null;
     image: string | null;
   };
   group: {
@@ -83,7 +86,7 @@ export function aggregateBalancesByUser(
       if (!userMap.has(userId)) {
         userMap.set(userId, {
           userId,
-          userName: balance.toUser.name || "Unknown",
+          userName: getDisplayName(balance.toUser),
           userImage: balance.toUser.image,
           totalAmount: 0,
           direction: "pay",
@@ -105,7 +108,7 @@ export function aggregateBalancesByUser(
       if (!userMap.has(userId)) {
         userMap.set(userId, {
           userId,
-          userName: balance.fromUser.name || "Unknown",
+          userName: getDisplayName(balance.fromUser),
           userImage: balance.fromUser.image,
           totalAmount: 0,
           direction: "receive",
