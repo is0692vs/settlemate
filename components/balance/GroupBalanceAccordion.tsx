@@ -2,6 +2,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import type { GroupBalance } from "@/lib/utils/cross-group-balance";
 
 type Props = {
@@ -46,7 +47,13 @@ export function GroupBalanceAccordion({ groupBalances }: Props) {
             <div key={gb.groupId} className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 {gb.groupIcon && <span>{gb.groupIcon}</span>}
-                <span className="text-gray-600">{gb.groupName}</span>
+                <Link
+                  href={`/dashboard/groups/${gb.groupId}`}
+                  className="text-blue-600 hover:text-blue-800 hover:underline cursor-pointer transition-colors"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {gb.groupName}
+                </Link>
               </div>
               <span className="font-medium">¥{gb.amount.toLocaleString()}</span>
             </div>
