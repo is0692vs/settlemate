@@ -10,6 +10,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      allowDangerousEmailAccountLinking: true, // Allow linking accounts with same email
     }),
   ],
   session: {
@@ -17,30 +18,27 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
   pages: {
     signIn: "/auth/signin",
+    error: "/auth/signin",
   },
-  debug: process.env.NODE_ENV === "development",
+  debug: true, // Enable debug in production to see error details
+  events: {
+    async signIn({ user, account, profile }) {
+      console.log("[NextAuth] Sign in event:", { user, account, profile });
+    },
+  },
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, account, trigger }) {
+      console.log("[NextAuth] JWT callback:", { trigger, hasUser: !!user, tokenId: token.id });
       if (user) {
         token.id = user.id;
       }
-
       return token;
     },
     async session({ session, token }) {
-      if (session.user) {
-        const userWithId = session.user as typeof session.user & {
-          id?: string;
-        };
-
-        const nextId =
-          (token.id as string | undefined) ?? token.sub ?? undefined;
-
-        if (nextId) {
-          userWithId.id = nextId;
-        }
+      console.log("[NextAuth] Session callback:", { tokenId: token.id, sessionUser: session.user?.email });
+      if (session.user && token.id) {
+        (session.user as typeof session.user & { id?: string }).id = token.id as string;
       }
-
       return session;
     },
   },
