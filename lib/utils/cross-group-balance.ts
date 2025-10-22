@@ -26,7 +26,7 @@ export type BalanceWithDetails = {
   };
 };
 
-// グループごとの残高
+// Balance per group
 export type GroupBalance = {
   groupId: string;
   groupName: string;
