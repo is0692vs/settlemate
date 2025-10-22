@@ -110,7 +110,7 @@ export function aggregateBalancesByUser(
     }
   }
 
-  // 払う/貰うで分離し、金額の大きい順にソート
+  // Separate by pay/receive and sort by largest amount
   const toPay: AggregatedBalance[] = [];
   const toReceive: AggregatedBalance[] = [];
 
