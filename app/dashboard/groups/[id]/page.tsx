@@ -227,7 +227,12 @@ export default async function GroupDetailPage({
 
         <div className="bg-white rounded-lg shadow p-6 mb-6">
           <h2 className="text-xl font-semibold mb-4">支出履歴</h2>
-          <ExpenseList expenses={group.expenses} groupId={group.id} />
+          <ExpenseList
+            expenses={group.expenses}
+            groupId={group.id}
+            members={users}
+            currentUserId={session.user.id}
+          />
         </div>
 
         <div className="bg-white rounded-lg shadow p-6 mb-6">
