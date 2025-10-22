@@ -23,6 +23,8 @@ The `@prisma/client` will sync with the schema automatically in development mode
 
 ### Running Migrations After Deployment
 
+The build pipeline automatically executes a safe migration helper script. If `DATABASE_URL` is defined, it runs `prisma migrate deploy`. When the variable is missing (such as in CI preview builds), the script skips the step and the build continues.
+
 After deploying to Vercel, run migrations using:
 
 ```bash

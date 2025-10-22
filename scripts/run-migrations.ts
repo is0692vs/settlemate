@@ -1,39 +1,31 @@
 #!/usr/bin/env tsx
-/**
- * Migration runner script
- *
- * Usage:
- *   pnpm tsx scripts/run-migrations.ts
- *
- * This script should be run in production environments AFTER deployment
- * to apply pending database migrations.
- */
+import { spawnSync } from "node:child_process";
 
-import { exec } from "child_process";
-import { promisify } from "util";
+function main() {
+  const databaseUrl = process.env.DATABASE_URL;
 
-const execAsync = promisify(exec);
+  if (!databaseUrl) {
+    console.info(
+      "[migrations] DATABASE_URL is not set. Skipping `prisma migrate deploy`."
+    );
+    return;
+  }
 
-async function runMigrations() {
-  try {
-    console.log("🔄 Running Prisma migrations...");
-    const { stdout, stderr } = await execAsync("prisma migrate deploy", {
-      env: process.env,
-    });
+  const result = spawnSync("pnpm", ["prisma", "migrate", "deploy"], {
+    stdio: "inherit",
+    env: process.env,
+  });
 
-    if (stdout) {
-      console.log("✅ Migration output:", stdout);
-    }
-    if (stderr) {
-      console.log("⚠️  Migration stderr:", stderr);
-    }
-
-    console.log("✅ Migrations completed successfully!");
-    process.exit(0);
-  } catch (error) {
-    console.error("❌ Migration failed:", error);
-    process.exit(1);
+  if (result.status !== 0) {
+    throw new Error(
+      `Failed to run migrations (exit code ${result.status ?? "unknown"}).`
+    );
   }
 }
 
-runMigrations();
+try {
+  main();
+} catch (error) {
+  console.error("[migrations] Error while running migrations:", error);
+  process.exit(1);
+}
