@@ -104,7 +104,7 @@ export function ExpenseCard({
           {/* 参加者情報 */}
           <div className="flex items-center gap-2 mt-2 flex-wrap">
             <span className="text-xs text-gray-600">
-              👥 {participantCount}/{totalMembers}人
+              <span className="sr-only">参加者</span><span aria-hidden="true">👥</span> {participantCount}/{totalMembers}人
             </span>
             <div className="flex items-center gap-1">
               {participantUsers.slice(0, 4).map((user) => (
