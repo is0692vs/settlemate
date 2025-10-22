@@ -34,7 +34,7 @@ export type GroupBalance = {
   amount: number;
 };
 
-// ユーザーごとに集計された残高の型
+// Type of balance aggregated by user
 export type AggregatedBalance = {
   userId: string;
   userName: string;
