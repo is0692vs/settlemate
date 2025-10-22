@@ -131,7 +131,7 @@ export default async function ProfilePage() {
     },
   });
 
-  // ユーザーごとに集計
+  // Aggregate by user
   const aggregated = aggregateBalancesByUser(balances, session.user.id);
 
   return (
