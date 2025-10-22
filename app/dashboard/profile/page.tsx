@@ -104,10 +104,7 @@ export default async function ProfilePage() {
   // 全グループの残高を取得
   const balances = await prisma.balance.findMany({
     where: {
-      OR: [
-        { userFrom: session.user.id },
-        { userTo: session.user.id },
-      ],
+      OR: [{ userFrom: session.user.id }, { userTo: session.user.id }],
     },
     include: {
       fromUser: {
@@ -155,7 +152,9 @@ export default async function ProfilePage() {
         </div>
 
         <div className="mb-8">
-          <h2 className="text-xl font-bold text-gray-900 mb-4">全グループの残高</h2>
+          <h2 className="text-xl font-bold text-gray-900 mb-4">
+            全グループの残高
+          </h2>
           <AggregatedBalanceList
             toPay={aggregated.toPay}
             toReceive={aggregated.toReceive}

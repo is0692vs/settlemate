@@ -1,6 +1,6 @@
 // lib/utils/cross-group-balance.ts
 
-import { netBalances } from './balance';
+import { netBalances } from "./balance";
 
 // BalanceWithDetailsの型定義
 export type BalanceWithDetails = {
@@ -40,7 +40,7 @@ export type AggregatedBalance = {
   userName: string;
   userImage: string | null;
   totalAmount: number;
-  direction: 'pay' | 'receive'; // 払う or 貰う
+  direction: "pay" | "receive"; // 払う or 貰う
   groupBalances: GroupBalance[];
 };
 
@@ -70,10 +70,10 @@ export function aggregateBalancesByUser(
       if (!userMap.has(userId)) {
         userMap.set(userId, {
           userId,
-          userName: balance.toUser.name || 'Unknown',
+          userName: balance.toUser.name || "Unknown",
           userImage: balance.toUser.image,
           totalAmount: 0,
-          direction: 'pay',
+          direction: "pay",
           groupBalances: [],
         });
       }
@@ -92,10 +92,10 @@ export function aggregateBalancesByUser(
       if (!userMap.has(userId)) {
         userMap.set(userId, {
           userId,
-          userName: balance.fromUser.name || 'Unknown',
+          userName: balance.fromUser.name || "Unknown",
           userImage: balance.fromUser.image,
           totalAmount: 0,
-          direction: 'receive',
+          direction: "receive",
           groupBalances: [],
         });
       }
@@ -115,7 +115,7 @@ export function aggregateBalancesByUser(
   const toReceive: AggregatedBalance[] = [];
 
   for (const balance of userMap.values()) {
-    if (balance.direction === 'pay') {
+    if (balance.direction === "pay") {
       toPay.push(balance);
     } else {
       toReceive.push(balance);

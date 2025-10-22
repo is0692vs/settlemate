@@ -1,9 +1,9 @@
 // components/balance/AggregatedBalanceList.tsx
-'use client';
+"use client";
 
-import Image from 'next/image';
-import type { AggregatedBalance } from '@/lib/utils/cross-group-balance';
-import { GroupBalanceAccordion } from './GroupBalanceAccordion';
+import Image from "next/image";
+import type { AggregatedBalance } from "@/lib/utils/cross-group-balance";
+import { GroupBalanceAccordion } from "./GroupBalanceAccordion";
 
 type Props = {
   toPay: AggregatedBalance[];
@@ -36,13 +36,13 @@ export function AggregatedBalanceList({ toPay, toReceive }: Props) {
           <span
             className={`font-bold ${
               netBalance > 0
-                ? 'text-green-600'
+                ? "text-green-600"
                 : netBalance < 0
-                ? 'text-red-600'
-                : 'text-gray-600'
+                ? "text-red-600"
+                : "text-gray-600"
             }`}
           >
-            {netBalance > 0 ? '+' : ''}¥{netBalance.toLocaleString()}
+            {netBalance > 0 ? "+" : ""}¥{netBalance.toLocaleString()}
           </span>
         </div>
       </div>
@@ -88,9 +88,7 @@ export function AggregatedBalanceList({ toPay, toReceive }: Props) {
                     <div className="text-xs text-gray-500">払う</div>
                   </div>
                 </div>
-                <GroupBalanceAccordion
-                  groupBalances={balance.groupBalances}
-                />
+                <GroupBalanceAccordion groupBalances={balance.groupBalances} />
               </div>
             ))}
           </div>
@@ -138,9 +136,7 @@ export function AggregatedBalanceList({ toPay, toReceive }: Props) {
                     <div className="text-xs text-gray-500">貰う</div>
                   </div>
                 </div>
-                <GroupBalanceAccordion
-                  groupBalances={balance.groupBalances}
-                />
+                <GroupBalanceAccordion groupBalances={balance.groupBalances} />
               </div>
             ))}
           </div>

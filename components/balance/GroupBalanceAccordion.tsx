@@ -1,8 +1,8 @@
 // components/balance/GroupBalanceAccordion.tsx
-'use client';
+"use client";
 
-import { useState } from 'react';
-import type { GroupBalance } from '@/lib/utils/cross-group-balance';
+import { useState } from "react";
+import type { GroupBalance } from "@/lib/utils/cross-group-balance";
 
 type Props = {
   groupBalances: GroupBalance[];
@@ -24,7 +24,7 @@ export function GroupBalanceAccordion({ groupBalances }: Props) {
       >
         <svg
           className={`h-4 w-4 transition-transform ${
-            isOpen ? 'rotate-180' : ''
+            isOpen ? "rotate-180" : ""
           }`}
           fill="none"
           viewBox="0 0 24 24"
@@ -48,9 +48,7 @@ export function GroupBalanceAccordion({ groupBalances }: Props) {
                 {gb.groupIcon && <span>{gb.groupIcon}</span>}
                 <span className="text-gray-600">{gb.groupName}</span>
               </div>
-              <span className="font-medium">
-                ¥{gb.amount.toLocaleString()}
-              </span>
+              <span className="font-medium">¥{gb.amount.toLocaleString()}</span>
             </div>
           ))}
         </div>
