@@ -3,7 +3,7 @@
 import { netBalances } from "./balance";
 import { getDisplayName } from "./user";
 
-// Type definition for BalanceWithDetails
+// Type definition for  BalanceWithDetails
 export type BalanceWithDetails = {
   id: string;
   groupId: string;
