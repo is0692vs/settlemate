@@ -1,7 +1,7 @@
 // components/profile/DisplayNameSettings.tsx
-'use client';
+"use client";
 
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent } from "react";
 
 type Props = {
   currentDisplayName: string | null;
@@ -30,7 +30,7 @@ export default function DisplayNameSettings({
       setIsEditing(false);
       setTimeout(() => setSuccess(false), 3000);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Update failed');
+      setError(err instanceof Error ? err.message : "Update failed");
     } finally {
       setIsLoading(false);
     }
@@ -44,9 +44,7 @@ export default function DisplayNameSettings({
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm text-gray-600 mb-1">Current Display Name</p>
-            <p className="font-medium">
-              {currentDisplayName || 'Not Set'}
-            </p>
+            <p className="font-medium">{currentDisplayName || "Not Set"}</p>
           </div>
           <button
             onClick={() => setIsEditing(true)}
@@ -68,7 +66,7 @@ export default function DisplayNameSettings({
               type="text"
               name="displayName"
               id="displayName"
-              defaultValue={currentDisplayName || ''}
+              defaultValue={currentDisplayName || ""}
               maxLength={50}
               placeholder="Enter your display name"
               className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -97,7 +95,7 @@ export default function DisplayNameSettings({
               disabled={isLoading}
               className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:bg-gray-400"
             >
-              {isLoading ? 'Saving...' : 'Save'}
+              {isLoading ? "Saving..." : "Save"}
             </button>
             <button
               type="button"

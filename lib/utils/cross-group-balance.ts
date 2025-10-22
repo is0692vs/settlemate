@@ -57,13 +57,26 @@ export function aggregateBalancesByUser(
   toPay: AggregatedBalance[];
   toReceive: AggregatedBalance[];
 } {
-  // First apply netting process
-  const netted = netBalances(balances);
+  // Group balances by group first
+  const balancesByGroup = new Map<string, BalanceWithDetails[]>();
+  for (const balance of balances) {
+    if (!balancesByGroup.has(balance.groupId)) {
+      balancesByGroup.set(balance.groupId, []);
+    }
+    balancesByGroup.get(balance.groupId)!.push(balance);
+  }
+
+  // Apply netting within each group separately
+  const nettedBalances: BalanceWithDetails[] = [];
+  for (const [, groupBalances] of balancesByGroup) {
+    const netted = netBalances(groupBalances);
+    nettedBalances.push(...netted);
+  }
 
   // Group by user
   const userMap = new Map<string, AggregatedBalance>();
 
-  for (const balance of netted) {
+  for (const balance of nettedBalances) {
     // When the current user pays
     if (balance.userFrom === currentUserId) {
       const userId = balance.userTo;
