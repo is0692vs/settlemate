@@ -1,7 +1,7 @@
 // components/settlements/SettlementForm.tsx
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -10,7 +10,6 @@ import { getDisplayName } from "@/lib/utils/user";
 import {
   DEFAULT_PAYMENT_METHOD_VALUES,
   PAYMENT_METHODS,
-  PAYMENT_METHOD_LABELS,
   PAYMENT_METHOD_VALUES,
   type PaymentMethodValue,
 } from "@/lib/constants/payment-methods";
@@ -103,7 +102,6 @@ export default function SettlementForm({
 
   const selectedUserTo = form.watch("userTo");
   const selectedAmount = form.watch("amount");
-  const selectedMethod = form.watch("method");
 
   const selectedBalance = useMemo(
     () => balances.find((balance) => balance.userTo === selectedUserTo),
@@ -112,7 +110,7 @@ export default function SettlementForm({
 
   const maxAmount = selectedBalance?.amount ?? 0;
 
-  const availableMethods: PaymentMethodValue[] = useMemo(() => {
+  const acceptedMethods: PaymentMethodValue[] = useMemo(() => {
     if (!selectedBalance?.toUser) {
       return [...DEFAULT_PAYMENT_METHOD_VALUES];
     }
@@ -122,24 +120,18 @@ export default function SettlementForm({
     );
   }, [selectedBalance]);
 
-  const paymentOptions = useMemo(
-    () =>
-      PAYMENT_METHODS.filter((method) =>
-        availableMethods.includes(method.value)
-      ),
-    [availableMethods]
-  );
+  // すべての決済方法を表示するが、設定済みを上に、未設定を下にソート
+  const sortedPaymentMethods = useMemo(() => {
+    return [...PAYMENT_METHODS].sort((a, b) => {
+      const aAccepted = acceptedMethods.includes(a.value);
+      const bAccepted = acceptedMethods.includes(b.value);
 
-  useEffect(() => {
-    if (paymentOptions.length === 0) {
-      form.setValue("method", DEFAULT_PAYMENT_METHOD_VALUES[0]);
-      return;
-    }
-
-    if (!paymentOptions.some((option) => option.value === selectedMethod)) {
-      form.setValue("method", paymentOptions[0].value);
-    }
-  }, [form, paymentOptions, selectedMethod]);
+      // 設定済みを上に
+      if (aAccepted && !bAccepted) return -1;
+      if (!aAccepted && bAccepted) return 1;
+      return 0;
+    });
+  }, [acceptedMethods]);
 
   const validateAmount = (amount: number) => {
     if (Number.isNaN(amount)) return "有効な数値を入力してください";
@@ -154,7 +146,6 @@ export default function SettlementForm({
     selectedUserTo &&
     selectedAmount > 0 &&
     selectedAmount <= maxAmount &&
-    paymentOptions.length > 0 &&
     !form.formState.errors.userTo &&
     !form.formState.errors.amount &&
     !form.formState.errors.method;
@@ -163,7 +154,6 @@ export default function SettlementForm({
     userToSelected: !!selectedUserTo,
     amountIsPositive: selectedAmount > 0,
     amountNotExceeded: selectedAmount <= maxAmount,
-    methodAvailable: paymentOptions.length > 0,
     noErrors:
       !form.formState.errors.userTo &&
       !form.formState.errors.amount &&
@@ -178,8 +168,7 @@ export default function SettlementForm({
       if (
         !selectedUserTo ||
         selectedAmount <= 0 ||
-        selectedAmount > maxAmount ||
-        paymentOptions.length === 0
+        selectedAmount > maxAmount
       ) {
         setError("入力内容を確認してください");
         setIsSubmitting(false);
@@ -263,35 +252,97 @@ export default function SettlementForm({
 
       <div>
         <label className="mb-1 block text-sm font-medium text-gray-700">
-          返済方法
+          返済方法 <span className="text-red-500">*</span>
         </label>
-        {paymentOptions.length === 0 ? (
-          <p className="rounded-md bg-amber-50 p-3 text-sm text-amber-800">
-            利用可能な決済方法が設定されていません。
-          </p>
-        ) : (
-          <div className="space-y-2">
-            {paymentOptions.map((method) => (
-              <label
-                key={method.value}
-                className="flex items-center rounded-md border border-gray-200 p-2"
-              >
-                <input
-                  type="radio"
-                  value={method.value}
-                  {...form.register("method")}
-                  className="mr-2"
-                />
-                <span className="mr-2 text-lg" aria-hidden>
-                  {method.icon}
-                </span>
-                <span>
-                  {PAYMENT_METHOD_LABELS[method.value] ?? method.label}
-                </span>
-              </label>
-            ))}
+
+        {/* 返済先が選択されている場合のヒント */}
+        {selectedUserTo && selectedBalance?.toUser && (
+          <div className="mb-3 rounded-lg border border-blue-200 bg-blue-50 p-3">
+            <p className="mb-1 text-sm font-medium text-blue-900">
+              💡 {getDisplayName(selectedBalance.toUser)}
+              さんが推奨している決済方法
+            </p>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {acceptedMethods.map((methodValue) => {
+                const methodInfo = PAYMENT_METHODS.find(
+                  (m) => m.value === methodValue
+                );
+                if (!methodInfo) return null;
+                return (
+                  <span
+                    key={methodValue}
+                    className="inline-flex items-center gap-1 rounded border border-blue-300 bg-white px-2 py-1 text-xs font-medium text-blue-900"
+                  >
+                    {methodInfo.icon} {methodInfo.label}
+                  </span>
+                );
+              })}
+            </div>
           </div>
         )}
+
+        <div className="space-y-2">
+          {sortedPaymentMethods.map((method, index) => {
+            const isAccepted = acceptedMethods.includes(method.value);
+            const prevMethod = sortedPaymentMethods[index - 1];
+            const prevAccepted = prevMethod
+              ? acceptedMethods.includes(prevMethod.value)
+              : true;
+            const showDivider = prevAccepted && !isAccepted;
+
+            return (
+              <div key={method.value}>
+                {showDivider && (
+                  <div className="my-3 flex items-center gap-2">
+                    <div className="flex-1 border-t border-gray-300"></div>
+                    <span className="text-xs font-medium text-gray-500">
+                      その他の方法（未設定）
+                    </span>
+                    <div className="flex-1 border-t border-gray-300"></div>
+                  </div>
+                )}
+
+                <label
+                  className={`flex cursor-pointer items-center gap-3 rounded-lg border p-3 transition-all ${
+                    isAccepted
+                      ? "border-blue-300 bg-blue-50 hover:bg-blue-100"
+                      : "border-gray-200 bg-gray-50 hover:bg-gray-100"
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    value={method.value}
+                    {...form.register("method")}
+                    className="h-4 w-4 text-blue-600"
+                  />
+                  <div className="flex flex-1 items-center gap-2">
+                    <span className="text-xl">{method.icon}</span>
+                    <span
+                      className={
+                        isAccepted
+                          ? "font-semibold text-gray-900"
+                          : "text-gray-600"
+                      }
+                    >
+                      {method.label}
+                    </span>
+                  </div>
+                  {isAccepted && (
+                    <span className="rounded-full bg-blue-600 px-2 py-1 text-xs font-medium text-white">
+                      ✓ 推奨
+                    </span>
+                  )}
+                  {!isAccepted && (
+                    <span className="rounded-full bg-gray-400 px-2 py-1 text-xs font-medium text-white">
+                      未設定
+                    </span>
+                  )}
+                </label>
+              </div>
+            );
+          })}
+        </div>
+
         {form.formState.errors.method && (
           <p className="mt-1 text-sm text-red-600">
             {form.formState.errors.method.message}
@@ -350,21 +401,12 @@ export default function SettlementForm({
               className={
                 validationStatus.amountNotExceeded
                   ? "line-through text-gray-500"
-                  : "text-red-600 font-semibold"
+                  : "font-semibold text-red-600"
               }
             >
               {`✓ 金額は残高${
                 selectedUserTo ? `（¥${maxAmount.toLocaleString()}）` : ""
               }以下`}
-            </li>
-            <li
-              className={
-                validationStatus.methodAvailable
-                  ? "line-through text-gray-500"
-                  : "text-red-600 font-semibold"
-              }
-            >
-              ✓ 利用可能な決済方法が存在
             </li>
             <li
               className={
