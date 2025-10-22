@@ -13,7 +13,9 @@ const schema = z.object({
   description: z.string().min(1, "説明を入力してください"),
   amount: z.number().positive("金額は正の数である必要があります"),
   paidBy: z.string().min(1, "支払者を選択してください"),
-  participants: z.array(z.string()).min(2, "最低2人(支払者+1人以上)を選択してください"),
+  participants: z
+    .array(z.string())
+    .min(2, "最低2人(支払者+1人以上)を選択してください"),
 });
 
 type FormData = z.infer<typeof schema>;
@@ -149,7 +151,7 @@ export function ExpenseForm({ groupId, members }: ExpenseFormProps) {
         )}
       </div>
 
-            <div>
+      <div>
         <label className="block text-sm font-medium mb-1">支払者</label>
         <select
           {...register("paidBy", {
