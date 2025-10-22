@@ -12,7 +12,7 @@ export function GroupBalanceAccordion({ groupBalances }: Props) {
   const [isOpen, setIsOpen] = useState(false);
 
   if (groupBalances.length <= 1) {
-    // 1グループのみの場合はアコーディオン不要
+    // Accordion not needed if only 1 group
     return null;
   }
 
