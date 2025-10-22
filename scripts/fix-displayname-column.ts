@@ -10,7 +10,7 @@ async function main() {
 
   try {
     console.log("Checking if displayName column exists...");
-    
+
     // Try to select displayName - if it fails, column doesn't exist
     try {
       await prisma.$queryRaw`SELECT "displayName" FROM "User" LIMIT 1`;
@@ -22,18 +22,17 @@ async function main() {
 
     // Add the column
     await prisma.$executeRaw`ALTER TABLE "User" ADD COLUMN IF NOT EXISTS "displayName" TEXT`;
-    
+
     console.log("✓ Successfully added displayName column!");
-    
+
     // Verify it was added
     const result = await prisma.$queryRaw`
       SELECT column_name 
       FROM information_schema.columns 
       WHERE table_name = 'User' AND column_name = 'displayName'
     `;
-    
+
     console.log("Verification:", result);
-    
   } catch (error) {
     console.error("Error:", error);
     throw error;

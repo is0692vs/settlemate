@@ -27,16 +27,24 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
   callbacks: {
     async jwt({ token, user, account, trigger }) {
-      console.log("[NextAuth] JWT callback:", { trigger, hasUser: !!user, tokenId: token.id });
+      console.log("[NextAuth] JWT callback:", {
+        trigger,
+        hasUser: !!user,
+        tokenId: token.id,
+      });
       if (user) {
         token.id = user.id;
       }
       return token;
     },
     async session({ session, token }) {
-      console.log("[NextAuth] Session callback:", { tokenId: token.id, sessionUser: session.user?.email });
+      console.log("[NextAuth] Session callback:", {
+        tokenId: token.id,
+        sessionUser: session.user?.email,
+      });
       if (session.user && token.id) {
-        (session.user as typeof session.user & { id?: string }).id = token.id as string;
+        (session.user as typeof session.user & { id?: string }).id =
+          token.id as string;
       }
       return session;
     },

@@ -12,20 +12,26 @@ function main() {
   }
 
   console.log("[migrations] Running prisma migrate deploy...");
-  
+
   const result = spawnSync("pnpm", ["prisma", "migrate", "deploy"], {
     stdio: "inherit",
     env: process.env,
   });
 
   if (result.status !== 0) {
-    console.error(`[migrations] Migration failed with exit code ${result.status ?? "unknown"}`);
-    
+    console.error(
+      `[migrations] Migration failed with exit code ${
+        result.status ?? "unknown"
+      }`
+    );
+
     // Don't fail the build, but log the error
-    console.warn("[migrations] Continuing build despite migration error. You may need to run migrations manually.");
+    console.warn(
+      "[migrations] Continuing build despite migration error. You may need to run migrations manually."
+    );
     return;
   }
-  
+
   console.log("[migrations] Migrations completed successfully!");
 }
 
