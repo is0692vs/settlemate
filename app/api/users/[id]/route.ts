@@ -30,11 +30,17 @@ export async function PATCH(
     const updatedUser = await prisma.user.update({
       where: { id },
       data: {
-        acceptedPaymentMethods: validatedData.acceptedPaymentMethods,
+        ...(validatedData.acceptedPaymentMethods && {
+          acceptedPaymentMethods: validatedData.acceptedPaymentMethods,
+        }),
+        ...(validatedData.displayName !== undefined && {
+          displayName: validatedData.displayName || null,
+        }),
       },
       select: {
         id: true,
         name: true,
+        displayName: true,
         email: true,
         image: true,
         acceptedPaymentMethods: true,

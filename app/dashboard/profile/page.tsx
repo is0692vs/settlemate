@@ -7,6 +7,7 @@ import Link from "next/link";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import ProfileInfo from "@/components/profile/ProfileInfo";
+import DisplayNameSettings from "@/components/profile/DisplayNameSettings";
 import PaymentMethodsSettings from "@/components/profile/PaymentMethodsSettings";
 import { AggregatedBalanceList } from "@/components/balance/AggregatedBalanceList";
 import {
@@ -77,6 +78,26 @@ async function updatePaymentMethods(formData: FormData) {
   revalidatePath("/dashboard/profile");
 }
 
+async function updateDisplayName(formData: FormData) {
+  "use server";
+
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    throw new Error("Authentication required");
+  }
+
+  const displayName = formData.get("displayName") as string;
+  const validated = updateUserSettingsSchema.parse({ displayName });
+
+  await prisma.user.update({
+    where: { id: session.user.id },
+    data: { displayName: validated.displayName || null },
+  });
+
+  revalidatePath("/dashboard/profile");
+}
+
 export default async function ProfilePage() {
   const session = await auth();
 
@@ -89,6 +110,7 @@ export default async function ProfilePage() {
     select: {
       id: true,
       name: true,
+      displayName: true,
       email: true,
       image: true,
       acceptedPaymentMethods: true,
@@ -149,6 +171,13 @@ export default async function ProfilePage() {
 
         <div className="mb-8">
           <ProfileInfo user={user} />
+        </div>
+
+        <div className="mb-8">
+          <DisplayNameSettings
+            currentDisplayName={user.displayName}
+            updateAction={updateDisplayName}
+          />
         </div>
 
         <div className="mb-8">

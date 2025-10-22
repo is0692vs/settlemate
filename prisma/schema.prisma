@@ -47,10 +47,11 @@ model VerificationToken {
 model User {
   id             String        @id @default(cuid())
   name           String?
+  displayName    String?       // User-customizable display name
   email          String        @unique
   emailVerified  DateTime?
   image          String?
-  acceptedPaymentMethods Json  @default("[\"cash\",\"bank_transfer\",\"paypay\",\"line_pay\"]") // 受付可能な決済方法
+  acceptedPaymentMethods Json  @default("[\"cash\",\"bank_transfer\",\"paypay\",\"line_pay\"]") // Accepted payment methods
   
   accounts       Account[]
   sessions       Session[]
