@@ -122,7 +122,7 @@ export function aggregateBalancesByUser(
     }
   }
 
-  // 金額の降順でソート
+  // Sort in descending order by amount
   toPay.sort((a, b) => b.totalAmount - a.totalAmount);
   toReceive.sort((a, b) => b.totalAmount - a.totalAmount);
 
