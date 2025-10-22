@@ -18,7 +18,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
   pages: {
     signIn: "/auth/signin",
-    error: "/auth/signin",
   },
   debug: true, // Enable debug in production to see error details
   events: {
