@@ -86,7 +86,7 @@ export function aggregateBalancesByUser(
         amount: balance.amount,
       });
     }
-    // 自分が貰う場合
+    // When the current user receives
     else if (balance.userTo === currentUserId) {
       const userId = balance.userFrom;
       if (!userMap.has(userId)) {
