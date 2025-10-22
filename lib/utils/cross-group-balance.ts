@@ -60,7 +60,7 @@ export function aggregateBalancesByUser(
   // まず相殺処理を適用
   const netted = netBalances(balances);
 
-  // ユーザーごとにグループ化
+  // Group by user
   const userMap = new Map<string, AggregatedBalance>();
 
   for (const balance of netted) {
