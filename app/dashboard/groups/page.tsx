@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import GroupCard from "@/components/groups/GroupCard";
+import JoinGroupForm from "@/components/groups/JoinGroupForm";
 import type { Group } from "@prisma/client";
 
 export default async function GroupsPage() {
@@ -69,6 +70,11 @@ export default async function GroupsPage() {
               </button>
             </Link>
           </div>
+        </div>
+
+        {/* 招待コード入力フォーム */}
+        <div className="mb-8">
+          <JoinGroupForm />
         </div>
 
         {formattedGroups.length === 0 ? (
