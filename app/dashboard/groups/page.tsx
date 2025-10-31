@@ -4,7 +4,9 @@ import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import GroupCard from "@/components/groups/GroupCard";
-import JoinGroupForm from "@/components/groups/JoinGroupForm";
+// JoinGroupFormのインポートを削除 - 招待コード入力フォームを別ページに移動するため
+// import JoinGroupForm from "@/components/groups/JoinGroupForm";
+
 import type { Group } from "@prisma/client";
 
 export default async function GroupsPage() {
@@ -72,10 +74,11 @@ export default async function GroupsPage() {
           </div>
         </div>
 
-        {/* 招待コード入力フォーム */}
-        <div className="mb-8">
+        {/* 招待コード入力フォームを削除 - 別ページ(/groups/join/[code])に移動するため */}
+        {/* <div className="mb-8">
           <JoinGroupForm />
-        </div>
+        </div> */}
+
 
         {formattedGroups.length === 0 ? (
           <div className="text-center py-12">

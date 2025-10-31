@@ -64,13 +64,32 @@ export function ExpenseCard({
       });
 
       if (!response.ok) {
-        throw new Error("削除に失敗しました");
+        let errorMessage = "削除に失敗しました";
+        try {
+          // Try to parse JSON error response
+          // APIからの具体的なエラーメッセージを表示するための改善
+          const errorData = await response.json();
+          if (errorData && typeof errorData.error === "string") {
+            errorMessage = errorData.error;
+          }
+        } catch {
+          // If not JSON, try to get text response
+          try {
+            const text = await response.text();
+            if (text) errorMessage = text;
+          } catch {
+            // Ignore, use default errorMessage
+          }
+        }
+        throw new Error(errorMessage);
       }
 
       router.refresh();
     } catch (error) {
       console.error("Failed to delete expense:", error);
-      alert("支出の削除に失敗しました");
+      alert(
+        error instanceof Error ? error.message : "支出の削除に失敗しました"
+      );
       setIsDeleting(false);
     }
   };
@@ -106,7 +125,9 @@ export function ExpenseCard({
           {/* 参加者情報 */}
           <div className="flex items-center gap-2 mt-2 flex-wrap">
             <span className="text-xs text-gray-600">
-              <span className="sr-only">参加者</span><span aria-hidden="true">👥</span> {participantCount}/{totalMembers}人
+              <span className="sr-only">参加者</span>
+              <span aria-hidden="true">👥</span> {participantCount}/
+              {totalMembers}人
             </span>
             <div className="flex items-center gap-1">
               {participantUsers.slice(0, 4).map((user) => (
