@@ -1,3 +1,5 @@
+# SettleMate - デフォルト README に戻す（詳細ドキュメントは docs/ディレクトリに移動）
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
