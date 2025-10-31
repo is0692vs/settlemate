@@ -65,7 +65,8 @@ export default function PaymentMethodsSettings({
           返済を受け付ける決済方法を選択してください。選択した方法のみが返済フォームに表示されます。
         </CardDescription>
       </CardHeader>
-      <CardContent as="form" onSubmit={handleSubmit} className="space-y-6">
+      <CardContent>
+        <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-3">
           {PAYMENT_METHODS.map((method) => {
             const Icon = method.icon;
@@ -108,6 +109,7 @@ export default function PaymentMethodsSettings({
             {isSubmitting ? "保存中..." : "設定を保存"}
           </Button>
         </div>
+        </form>
       </CardContent>
     </Card>
   );

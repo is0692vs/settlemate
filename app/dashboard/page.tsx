@@ -46,10 +46,7 @@ export default async function DashboardPage() {
 
       <div className="container mx-auto px-4 py-8">
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <Card
-            className="hover:shadow-md transition-shadow cursor-pointer"
-            asChild
-          >
+          <Card className="hover:shadow-md transition-shadow cursor-pointer">
             <Link href="/dashboard/groups">
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
@@ -65,10 +62,7 @@ export default async function DashboardPage() {
             </Link>
           </Card>
 
-          <Card
-            className="hover:shadow-md transition-shadow cursor-pointer"
-            asChild
-          >
+          <Card className="hover:shadow-md transition-shadow cursor-pointer">
             <Link href="/dashboard/profile">
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">

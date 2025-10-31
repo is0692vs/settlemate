@@ -7,8 +7,7 @@ import { prisma } from "@/lib/prisma";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Mail, Edit, Users } from "lucide-react";
+import { ArrowLeft, Mail } from "lucide-react";
 import { updateUserSettingsSchema } from "@/lib/validations/user";
 import { aggregateBalancesByUser } from "@/lib/utils/cross-group-balance";
 import { getDisplayName } from "@/lib/utils/user";
@@ -77,8 +76,8 @@ export default async function ProfilePage() {
   const aggregated = aggregateBalancesByUser(balances, session.user.id);
   const acceptedMethods = normalizeAcceptedMethods(user.acceptedPaymentMethods);
 
-  const totalToPay = aggregated.toPay.reduce((acc, p) => acc + p.amount, 0);
-  const totalToReceive = aggregated.toReceive.reduce((acc, r) => acc + r.amount, 0);
+  const totalToPay = aggregated.toPay.reduce((acc, p) => acc + p.totalAmount, 0);
+  const totalToReceive = aggregated.toReceive.reduce((acc, r) => acc + r.totalAmount, 0);
   const netBalance = totalToReceive - totalToPay;
 
   return (

@@ -273,7 +273,7 @@ export default function SettlementForm({
                     key={methodValue}
                     className="inline-flex items-center gap-1 rounded border border-blue-300 bg-white px-2 py-1 text-xs font-medium text-blue-900"
                   >
-                    {methodInfo.icon} {methodInfo.label}
+                    <methodInfo.icon className="h-4 w-4" /> {methodInfo.label}
                   </span>
                 );
               })}
@@ -316,7 +316,7 @@ export default function SettlementForm({
                     className="h-4 w-4 text-blue-600"
                   />
                   <div className="flex flex-1 items-center gap-2">
-                    <span className="text-xl">{method.icon}</span>
+                    <method.icon className="h-5 w-5" />
                     <span
                       className={
                         isAccepted

@@ -8,7 +8,7 @@ import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Plus, ArrowLeft, Users } from "lucide-react";
 
-import type { Group } from "@prisma/client";
+
 
 export default async function GroupsPage() {
   const session = await auth();
@@ -74,7 +74,7 @@ export default async function GroupsPage() {
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {groups.map((group) => (
-              <Card key={group.id} className="hover:shadow-md transition-shadow cursor-pointer" asChild>
+              <Card key={group.id} className="hover:shadow-md transition-shadow cursor-pointer">
                 <Link href={`/dashboard/groups/${group.id}`}>
                   <CardHeader className="pb-3">
                     <div className="flex items-start gap-3">
