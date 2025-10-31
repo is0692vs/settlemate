@@ -27,9 +27,9 @@ export default function JoinGroupForm() {
       // 招待コードまたはフルURLから招待コードを抽出
       let code = trimmedCode;
       
-      // フルURLの場合は招待コードを抽出
+      // フルURLの場合は招待コードを抽出（英数字、ハイフン、アンダースコアのみ）
       if (trimmedCode.includes("/groups/join/")) {
-        const match = trimmedCode.match(/\/groups\/join\/([^/?]+)/);
+        const match = trimmedCode.match(/\/groups\/join\/([A-Za-z0-9_-]+)/);
         if (match) {
           code = match[1];
         }
@@ -38,7 +38,7 @@ export default function JoinGroupForm() {
       // 招待ページにリダイレクト
       router.push(`/groups/join/${code}`);
     } catch (err) {
-      setError("エラーが発生しました");
+      setError("招待ページへの移動に失敗しました");
       console.error(err);
       setIsSubmitting(false);
     }
