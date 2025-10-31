@@ -64,8 +64,23 @@ export function ExpenseCard({
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "削除に失敗しました");
+        let errorMessage = "削除に失敗しました";
+        try {
+          // Try to parse JSON error response
+          const errorData = await response.json();
+          if (errorData && typeof errorData.error === "string") {
+            errorMessage = errorData.error;
+          }
+        } catch {
+          // If not JSON, try to get text response
+          try {
+            const text = await response.text();
+            if (text) errorMessage = text;
+          } catch {
+            // Ignore, use default errorMessage
+          }
+        }
+        throw new Error(errorMessage);
       }
 
       router.refresh();
