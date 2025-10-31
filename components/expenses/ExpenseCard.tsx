@@ -64,13 +64,14 @@ export function ExpenseCard({
       });
 
       if (!response.ok) {
-        throw new Error("削除に失敗しました");
+        const errorData = await response.json();
+        throw new Error(errorData.error || "削除に失敗しました");
       }
 
       router.refresh();
     } catch (error) {
       console.error("Failed to delete expense:", error);
-      alert("支出の削除に失敗しました");
+      alert(error instanceof Error ? error.message : "支出の削除に失敗しました");
       setIsDeleting(false);
     }
   };
