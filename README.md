@@ -1,8 +1,6 @@
 # SettleMate
 
-**割り勘・立て替え管理アプリ**
-
-SettleMateは、友人やグループでの支出を簡単に管理できるWebアプリケーションです。旅行、飲み会、イベントなど、複数人での支払いを記録し、自動的に清算額を計算します。
+SettleMate は、友人やグループでの支出を簡単に管理できる Web アプリケーションです。旅行、飲み会、イベントなど、複数人での支払いを記録し、自動的に清算額を計算します。
 
 <div align="center">
 
@@ -18,30 +16,35 @@ SettleMateは、友人やグループでの支出を簡単に管理できるWeb�
 ### ✅ 実装済み機能
 
 - **👥 グループ管理**
+
   - グループの作成・編集・削除
   - 招待コードによるメンバー追加
   - グループアイコン設定（絵文字対応）
 
 - **💰 支出管理**
+
   - 支出の登録・編集・削除
-  - 均等割りと手動借金登録の2つの分割方式
+  - 均等割りと手動借金登録の 2 つの分割方式
   - 支出履歴の閲覧
 
 - **📊 残高管理**
+
   - グループ内メンバー間の貸借関係を自動計算
-  - グラフによる可視化（ReactFlow使用）
+  - グラフによる可視化（ReactFlow 使用）
   - 誰が誰にいくら払うべきかを明確に表示
 
 - **💳 清算機能**
-  - 現金、銀行振込、PayPay、LINE Payなど複数の決済方法に対応
+
+  - 現金、銀行振込、PayPay、LINE Pay など複数の決済方法に対応
   - 清算履歴の記録
   - 清算後の残高自動更新
 
 - **🔐 認証**
-  - Google OAuth 2.0によるログイン
-  - NextAuth.js v5使用
 
-- **📱 PWA対応**
+  - Google OAuth 2.0 によるログイン
+  - NextAuth.js v5 使用
+
+- **📱 PWA 対応**
   - スマートフォンのホーム画面に追加可能
   - オフライン動作対応（一部機能）
   - プッシュ通知対応（将来実装予定）
@@ -57,13 +60,13 @@ SettleMateは、友人やグループでの支出を簡単に管理できるWeb�
 
 ### 前提条件
 
-- Node.js 20以上
-- pnpm 8以上（推奨）
-- PostgreSQLデータベース
+- Node.js 20 以上
+- pnpm 8 以上（推奨）
+- PostgreSQL データベース
 
 ### インストール
 
-```bash
+````bash
 # リポジトリをクローン
 git clone https://github.com/is0692vs/settlemate.git
 cd settlemate
@@ -130,7 +133,7 @@ SettleMate は、グループでの支出を簡単に管理し、精算を自動
 ```bash
 git clone https://github.com/is0692vs/settlemate.git
 cd settlemate
-```
+````
 
 2. **依存関係のインストール**
 
@@ -166,7 +169,6 @@ pnpm dev
 
 ブラウザで [http://localhost:3000](http://localhost:3000) を開いてください。
 
-
 ### 必要な環境変数
 
 ```env
@@ -186,15 +188,15 @@ AUTH_URL="http://localhost:3000"  # 本番環境では実際のURLを設定
 
 - [開発者ガイド](docs/DEVELOPMENT.md) - 開発環境のセットアップと開発フロー
 - [アーキテクチャ](docs/ARCHITECTURE.md) - システム構成と技術スタック
-- [API仕様書](docs/API.md) - REST API リファレンス
+- [API 仕様書](docs/API.md) - REST API リファレンス
 - [デプロイメントガイド](docs/DEPLOYMENT.md) - 本番環境へのデプロイ手順
 - [ユーザーガイド](docs/USER_GUIDE.md) - エンドユーザー向け使い方ガイド
 
 ### 個別ドキュメント
 
-- [支出API](docs/EXPENSE_API.md) - 支出管理APIの詳細
-- [PWA対応](docs/PWA.md) - Progressive Web App機能について
-- [データベースマイグレーション](MIGRATIONS.md) - Prismaマイグレーション手順
+- [支出 API](docs/EXPENSE_API.md) - 支出管理 API の詳細
+- [PWA 対応](docs/PWA.md) - Progressive Web App 機能について
+- [データベースマイグレーション](MIGRATIONS.md) - Prisma マイグレーション手順
 
 ## 🛠️ 技術スタック
 
@@ -245,6 +247,7 @@ AUTH_URL="http://localhost:3000"  # 本番環境では実際のURLを設定
 「清算する」ボタンから、実際に支払った金額と決済方法を記録します。残高が自動的に更新されます。
 
 詳しい使い方は[ユーザーガイド](docs/USER_GUIDE.md)を参照してください。
+
 ## 📁 プロジェクト構造
 
 ```
@@ -285,7 +288,7 @@ pnpm build
 
 ## 🤝 コントリビューション
 
-プルリクエストを歓迎します！大きな変更の場合は、まずissueを開いて変更内容を議論してください。
+プルリクエストを歓迎します！大きな変更の場合は、まず issue を開いて変更内容を議論してください。
 
 1. このリポジトリをフォーク
 2. フィーチャーブランチを作成 (`git checkout -b feature/amazing-feature`)
@@ -308,11 +311,15 @@ pnpm build
 - [NextAuth.js](https://next-auth.js.org/)
 - [ReactFlow](https://reactflow.dev/)
 - [Tailwind CSS](https://tailwindcss.com/)
+
 # ESLint
+
 pnpm lint
 
 # ビルドテスト
+
 pnpm build
+
 ```
 
 ## 🚀 デプロイ
@@ -339,3 +346,4 @@ This project is private and all rights reserved.
 ## 📞 サポート
 
 バグ報告や機能リクエストは、GitHub Issues をご利用ください。
+```
