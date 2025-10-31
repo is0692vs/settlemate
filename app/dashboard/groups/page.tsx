@@ -3,24 +3,21 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import GroupCard from "@/components/groups/GroupCard";
-// JoinGroupFormのインポートを削除 - 招待コード入力フォームを別ページに移動するため
-// import JoinGroupForm from "@/components/groups/JoinGroupForm";
+import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Plus, ArrowLeft, Users } from "lucide-react";
 
 import type { Group } from "@prisma/client";
 
 export default async function GroupsPage() {
   const session = await auth();
 
-  if (!session?.user) {
+  if (!session?.user?.id) {
     redirect("/auth/signin");
   }
 
   const userId = session.user.id;
-
-  if (!userId) {
-    redirect("/auth/signin");
-  }
 
   const groups = await prisma.group.findMany({
     where: {
@@ -40,69 +37,62 @@ export default async function GroupsPage() {
     },
   });
 
-  const formattedGroups = groups.map(
-    (group: Group & { _count: { members: number } }) => ({
-      id: group.id,
-      name: group.name,
-      icon: group.icon,
-      createdAt: group.createdAt.toISOString(),
-      memberCount: group._count.members,
-    })
-  );
-
   return (
-    <div className="min-h-screen p-8">
-      <div className="mx-auto max-w-6xl">
-        <div className="flex items-center justify-between mb-8">
-          <h1 className="text-2xl font-bold">グループ</h1>
-          <div className="flex gap-2">
-            <Link href="/dashboard/profile">
-              <button className="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-100">
-                マイページ
-              </button>
-            </Link>
-            <Link href="/dashboard">
-              <button className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
-                戻る
-              </button>
-            </Link>
-            <Link href="/dashboard/groups/new">
-              <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-                新規作成
-              </button>
-            </Link>
+    <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
+      {/* Header */}
+      <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-10">
+        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Button variant="ghost" size="icon" asChild>
+              <Link href="/dashboard">
+                <ArrowLeft className="w-5 h-5" />
+              </Link>
+            </Button>
+            <h1 className="text-xl font-bold">グループ</h1>
           </div>
-        </div>
-
-        {/* 招待コード入力フォームを削除 - 別ページ(/groups/join/[code])に移動するため */}
-        {/* <div className="mb-8">
-          <JoinGroupForm />
-        </div> */}
-
-
-        {formattedGroups.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-gray-500 mb-4">グループがありません</p>
-            <Link
-              href="/dashboard/groups/new"
-              className="text-blue-600 hover:underline"
-            >
-              最初のグループを作成
+          <Button size="sm" asChild>
+            <Link href="/dashboard/groups/new">
+              <Plus className="w-4 h-4 mr-1" />
+              新規作成
             </Link>
+          </Button>
+        </div>
+      </header>
+
+      <div className="container mx-auto px-4 py-6">
+        {groups.length === 0 ? (
+          <div className="text-center py-20">
+            <h2 className="text-xl font-semibold mb-2">グループがありません</h2>
+            <p className="text-muted-foreground mb-6">最初のグループを作成して、割り勘を始めましょう。</p>
+            <Button asChild>
+              <Link href="/dashboard/groups/new">
+                <Plus className="w-4 h-4 mr-2" />
+                グループを作成
+              </Link>
+            </Button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {formattedGroups.map(
-              (group: {
-                id: string;
-                name: string;
-                icon: string | null;
-                createdAt: string;
-                memberCount: number;
-              }) => (
-                <GroupCard key={group.id} group={group} />
-              )
-            )}
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {groups.map((group) => (
+              <Card key={group.id} className="hover:shadow-md transition-shadow cursor-pointer" asChild>
+                <Link href={`/dashboard/groups/${group.id}`}>
+                  <CardHeader className="pb-3">
+                    <div className="flex items-start gap-3">
+                      <Avatar className="w-12 h-12">
+                        <AvatarFallback className="text-2xl bg-primary/10">{group.icon || "👥"}</AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 min-w-0">
+                        <CardTitle className="text-base font-semibold truncate">{group.name}</CardTitle>
+                        <div className="flex items-center gap-1 mt-1 text-sm text-muted-foreground">
+                          <Users className="w-3.5 h-3.5" />
+                          <span>メンバー: {group._count.members}人</span>
+                        </div>
+                      </div>
+                    </div>
+                  </CardHeader>
+                </Link>
+              </Card>
+            ))}
           </div>
         )}
       </div>

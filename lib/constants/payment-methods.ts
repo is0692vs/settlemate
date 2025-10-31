@@ -1,19 +1,28 @@
 // lib/constants/payment-methods.ts
-// @path: lib/constants/payment-methods.ts
+import {
+  Banknote,
+  Building2,
+  Smartphone,
+  CreditCard,
+  Apple,
+  Wallet,
+  Train,
+  MoreHorizontal,
+} from "lucide-react";
 
 export const PAYMENT_METHODS = [
-  { value: "cash", label: "現金", icon: "💵" },
-  { value: "bank_transfer", label: "銀行振込", icon: "🏦" },
-  { value: "paypay", label: "PayPay", icon: "💰" },
-  { value: "line_pay", label: "LINE Pay", icon: "💳" },
-  { value: "rakuten_pay", label: "楽天ペイ", icon: "💴" },
-  { value: "apple_pay", label: "Apple Pay", icon: "🍎" },
-  { value: "merpay", label: "メルペイ", icon: "💚" },
-  { value: "au_pay", label: "au PAY", icon: "🔵" },
-  { value: "d_pay", label: "d払い", icon: "📱" },
-  { value: "transportation_ic", label: "交通系IC", icon: "🎫" },
-  { value: "credit_card", label: "クレジットカード", icon: "💳" },
-  { value: "other", label: "その他", icon: "✏️" },
+  { value: "cash", label: "現金", icon: Banknote },
+  { value: "bank_transfer", label: "銀行振込", icon: Building2 },
+  { value: "paypay", label: "PayPay", icon: Smartphone },
+  { value: "line_pay", label: "LINE Pay", icon: Smartphone },
+  { value: "rakuten_pay", label: "楽天ペイ", icon: Smartphone },
+  { value: "apple_pay", label: "Apple Pay", icon: Apple },
+  { value: "merpay", label: "メルペイ", icon: Wallet },
+  { value: "au_pay", label: "au PAY", icon: Smartphone },
+  { value: "d_pay", label: "d払い", icon: Smartphone },
+  { value: "transportation_ic", label: "交通系IC", icon: Train },
+  { value: "credit_card", label: "クレジットカード", icon: CreditCard },
+  { value: "other", label: "その他", icon: MoreHorizontal },
 ] as const;
 
 export type PaymentMethodValue = (typeof PAYMENT_METHODS)[number]["value"];
